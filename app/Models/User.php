@@ -61,6 +61,30 @@ class User extends Authenticatable
         return $this->role && $this->role->slug === $slug;
     }
 
+    /**
+     * Check if user is an admin.
+     */
+    public function isAdmin(): bool
+    {
+        return $this->hasRole('admin');
+    }
+
+    /**
+     * Check if user is a subscriber.
+     */
+    public function isSubscriber(): bool
+    {
+        return $this->hasRole('subscriber');
+    }
+
+    /**
+     * Check if user has accepted terms.
+     */
+    public function hasAcceptedTerms(): bool
+    {
+        return $this->terms_accepted_at !== null;
+    }
+
     public function subscription()
     {
         return $this->hasOne(UserSubscription::class)->latestOfMany();

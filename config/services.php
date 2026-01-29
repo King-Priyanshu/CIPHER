@@ -41,6 +41,8 @@ return [
     |--------------------------------------------------------------------------
     */
 
+    'payment_gateway' => env('PAYMENT_GATEWAY', 'stripe'),
+
     'stripe' => [
         'key' => env('STRIPE_KEY'),
         'secret' => env('STRIPE_SECRET'),
