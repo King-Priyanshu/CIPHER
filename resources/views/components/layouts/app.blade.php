@@ -72,7 +72,7 @@
                class="fixed lg:static lg:translate-x-0 inset-y-0 left-0 z-30 w-64 sidebar transform transition-transform duration-200 ease-in-out pt-16 lg:pt-0">
             <div class="flex flex-col h-full px-4 py-6">
                 <!-- Navigation -->
-                <nav class="flex-1 space-y-1">
+                <nav class="flex-1 space-y-1 overflow-y-auto sidebar-scroll-area">
                     <a href="{{ route('subscriber.dashboard') }}" 
                        class="sidebar-link {{ request()->routeIs('subscriber.dashboard') ? 'active' : '' }}">
                         <svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -144,7 +144,7 @@
              class="fixed inset-0 bg-black bg-opacity-50 z-20 lg:hidden"></div>
 
         <!-- Main Content -->
-        <main class="flex-1 p-6 lg:p-8 overflow-y-auto">
+        <main class="flex-1 p-6 lg:p-8 main-scroll-area overflow-y-auto">
             <!-- Page Header -->
             @if (isset($header))
                 <header class="mb-6">

@@ -189,3 +189,126 @@ body {
     background: rgba(239, 68, 68, .15);
     color: #991b1b;
 }
+
+/* =========================
+   SCROLLBARS
+   ========================= */
+/* Sidebar Scrollbar */
+.sidebar nav::-webkit-scrollbar,
+.sidebar-scroll-area::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar nav::-webkit-scrollbar-track,
+.sidebar-scroll-area::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 999px;
+}
+
+.sidebar nav::-webkit-scrollbar-thumb,
+.sidebar-scroll-area::-webkit-scrollbar-thumb {
+    background: rgba(0, 191, 166, 0.3);
+    border-radius: 999px;
+}
+
+.sidebar nav::-webkit-scrollbar-thumb:hover,
+.sidebar-scroll-area::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 191, 166, 0.5);
+}
+
+/* Main Content Scrollbar */
+.main-scroll-area::-webkit-scrollbar {
+    width: 8px;
+}
+
+.main-scroll-area::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 999px;
+}
+
+.main-scroll-area::-webkit-scrollbar-thumb {
+    background: rgba(100, 116, 139, 0.3);
+    border-radius: 999px;
+}
+
+.main-scroll-area::-webkit-scrollbar-thumb:hover {
+    background: rgba(100, 116, 139, 0.5);
+}
+
+/* =========================
+   ANIMATIONS
+   ========================= */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.animate-fade-in-up {
+    animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+    /* Star hidden */
+}
+
+.animate-fade-in {
+    animation: fadeIn 1s ease-out forwards;
+    opacity: 0;
+}
+
+.animation-delay-100 {
+    animation-delay: 100ms;
+}
+
+.animation-delay-200 {
+    animation-delay: 200ms;
+}
+
+.animation-delay-300 {
+    animation-delay: 300ms;
+}
+
+.animation-delay-400 {
+    animation-delay: 400ms;
+}
+
+.animation-delay-500 {
+    animation-delay: 500ms;
+}
+
+/* Staggered children animation */
+.stagger-enter>* {
+    opacity: 0;
+    animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.stagger-enter>*:nth-child(1) {
+    animation-delay: 100ms;
+}
+
+.stagger-enter>*:nth-child(2) {
+    animation-delay: 200ms;
+}
+
+.stagger-enter>*:nth-child(3) {
+    animation-delay: 300ms;
+}
+
+.stagger-enter>*:nth-child(4) {
+    animation-delay: 400ms;
+}

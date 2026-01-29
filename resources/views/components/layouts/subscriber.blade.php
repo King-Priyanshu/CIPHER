@@ -229,23 +229,46 @@
             box-shadow: 0 4px 12px rgba(0, 191, 166, 0.2);
         }
 
-        /* Scrollbar Styles */
-        .sidebar nav::-webkit-scrollbar {
+        /* Sidebar Scrollbar Styles */
+        .sidebar nav::-webkit-scrollbar,
+        .sidebar-scroll-area::-webkit-scrollbar {
             width: 6px;
         }
 
-        .sidebar nav::-webkit-scrollbar-track {
+        .sidebar nav::-webkit-scrollbar-track,
+        .sidebar-scroll-area::-webkit-scrollbar-track {
             background: rgba(255, 255, 255, 0.05);
             border-radius: 999px;
         }
 
-        .sidebar nav::-webkit-scrollbar-thumb {
+        .sidebar nav::-webkit-scrollbar-thumb,
+        .sidebar-scroll-area::-webkit-scrollbar-thumb {
             background: rgba(0, 191, 166, 0.3);
             border-radius: 999px;
         }
 
-        .sidebar nav::-webkit-scrollbar-thumb:hover {
+        .sidebar nav::-webkit-scrollbar-thumb:hover,
+        .sidebar-scroll-area::-webkit-scrollbar-thumb:hover {
             background: rgba(0, 191, 166, 0.5);
+        }
+
+        /* Main Content Scrollbar Styles */
+        .main-scroll-area::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .main-scroll-area::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 999px;
+        }
+
+        .main-scroll-area::-webkit-scrollbar-thumb {
+            background: rgba(100, 116, 139, 0.3);
+            border-radius: 999px;
+        }
+
+        .main-scroll-area::-webkit-scrollbar-thumb:hover {
+            background: rgba(100, 116, 139, 0.5);
         }
 
         /* Animations */
@@ -275,7 +298,7 @@
 </head>
 
 <body class="h-full bg-slate-50 antialiased">
-<div class="min-h-screen flex" x-data="{ sidebarOpen: false }">
+<div class="h-screen flex overflow-hidden" x-data="{ sidebarOpen: false }">
 
     <!-- Sidebar -->
     <aside
@@ -406,9 +429,11 @@
         </header>
 
         <!-- Main Content -->
-        <main class="flex-1 p-6 lg:p-8">
-            @yield('content')
-            {{ $slot ?? '' }}
+        <main class="flex-1 main-scroll-area overflow-y-auto">
+            <div class="p-6 lg:p-8">
+                @yield('content')
+                {{ $slot ?? '' }}
+            </div>
         </main>
 
     </div>

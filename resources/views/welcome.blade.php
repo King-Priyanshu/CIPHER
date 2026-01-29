@@ -8,7 +8,7 @@
     <div class="bg-gradient-to-br from-slate-900 via-slate-800 to-teal-900 text-white">
         <div class="max-w-6xl mx-auto px-6 py-20">
             <div class="grid md:grid-cols-2 gap-12 items-center">
-                <div>
+                <div class="animate-fade-in-up">
                     <!-- Logo -->
                     <div class="flex items-center gap-3 mb-8">
                         <div class="w-12 h-12 bg-gradient-to-br from-teal-400 to-teal-600 rounded-xl flex items-center justify-center transform rotate-45">
@@ -20,15 +20,15 @@
                         <span class="text-3xl font-bold">CIPHER</span>
                     </div>
                   
-                    <h1 class="text-5xl font-bold mb-6 leading-tight">
+                    <h1 class="text-5xl font-bold mb-6 leading-tight animate-fade-in-up animation-delay-100">
                         Invest Together,<br />
                         <span class="text-teal-400">Grow Together</span>
                     </h1>
-                    <p class="text-xl text-gray-300 mb-8">
+                    <p class="text-xl text-gray-300 mb-8 animate-fade-in-up animation-delay-200">
                         Join a transparent community investment platform. Pool your subscriptions, invest in real projects, and share the profits—all with complete transparency.
                     </p>
                   
-                    <div class="flex gap-4">
+                    <div class="flex gap-4 animate-fade-in-up animation-delay-300">
                         <a href="{{ route('register') }}" class="bg-gradient-to-r from-teal-500 to-teal-600 text-white px-8 py-4 rounded-lg font-semibold text-lg shadow-xl hover:shadow-2xl hover:scale-105 transition-all flex items-center gap-2">
                             Start Investing
                             <!-- ArrowRight -->
@@ -42,7 +42,7 @@
                     </div>
                   
                     <!-- Trust Indicators -->
-                    <div class="flex gap-8 mt-12 pt-8 border-t border-white/20">
+                    <div class="flex gap-8 mt-12 pt-8 border-t border-white/20 animate-fade-in-up animation-delay-400">
                         <div>
                             <div class="text-3xl font-bold text-teal-400">$2.4M+</div>
                             <div class="text-sm text-gray-400">Total Invested</div>
@@ -59,7 +59,7 @@
                 </div>
                 
                 <!-- Hero Illustration -->
-                <div class="relative">
+                <div class="relative animate-fade-in animation-delay-500">
                     <div class="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20">
                         <div class="grid grid-cols-3 gap-4 mb-6">
                             @foreach(range(1, 6) as $i)
@@ -88,79 +88,10 @@
             <p class="text-xl text-gray-600">Simple, transparent, community-driven investing</p>
         </div>
         
-        <div class="grid md:grid-cols-4 gap-8">
+        <div class="grid md:grid-cols-4 gap-8 stagger-enter">
             <!-- Step 1: Subscribe -->
             <div class="relative">
-                <div class="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 border border-gray-100 h-full">
-                    <div class="w-12 h-12 bg-gradient-to-br from-teal-100 to-teal-200 rounded-xl flex items-center justify-center mb-4">
-                        <!-- DollarSign -->
-                        <svg class="w-6 h-6 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                    </div>
-                    <div class="absolute -top-3 -right-3 w-8 h-8 bg-gradient-to-br from-teal-500 to-teal-600 text-white rounded-full flex items-center justify-center font-bold">
-                        1
-                    </div>
-                    <h3 class="text-xl font-bold text-slate-900 mb-2">Subscribe</h3>
-                    <p class="text-gray-600">Choose a plan that fits your investment goals</p>
-                </div>
-                <div class="hidden md:block absolute top-1/2 -right-4 w-8 h-0.5 bg-gradient-to-r from-teal-300 to-transparent"></div>
-            </div>
-
-            <!-- Step 2: Pool Funds -->
-            <div class="relative">
-                <div class="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 border border-gray-100 h-full">
-                    <div class="w-12 h-12 bg-gradient-to-br from-teal-100 to-teal-200 rounded-xl flex items-center justify-center mb-4">
-                        <!-- Users -->
-                        <svg class="w-6 h-6 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                        </svg>
-                    </div>
-                    <div class="absolute -top-3 -right-3 w-8 h-8 bg-gradient-to-br from-teal-500 to-teal-600 text-white rounded-full flex items-center justify-center font-bold">
-                        2
-                    </div>
-                    <h3 class="text-xl font-bold text-slate-900 mb-2">Pool Funds</h3>
-                    <p class="text-gray-600">Your subscription joins the community investment pool</p>
-                </div>
-                <div class="hidden md:block absolute top-1/2 -right-4 w-8 h-0.5 bg-gradient-to-r from-teal-300 to-transparent"></div>
-            </div>
-
-            <!-- Step 3: Invest Together -->
-            <div class="relative">
-                <div class="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 border border-gray-100 h-full">
-                    <div class="w-12 h-12 bg-gradient-to-br from-teal-100 to-teal-200 rounded-xl flex items-center justify-center mb-4">
-                        <!-- TrendingUp -->
-                        <svg class="w-6 h-6 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                        </svg>
-                    </div>
-                    <div class="absolute -top-3 -right-3 w-8 h-8 bg-gradient-to-br from-teal-500 to-teal-600 text-white rounded-full flex items-center justify-center font-bold">
-                        3
-                    </div>
-                    <h3 class="text-xl font-bold text-slate-900 mb-2">Invest Together</h3>
-                    <p class="text-gray-600">Funds are allocated to vetted projects</p>
-                </div>
-                <div class="hidden md:block absolute top-1/2 -right-4 w-8 h-0.5 bg-gradient-to-r from-teal-300 to-transparent"></div>
-            </div>
-
-            <!-- Step 4: Share Profits -->
-            <div class="relative">
-                <div class="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 border border-gray-100 h-full">
-                    <div class="w-12 h-12 bg-gradient-to-br from-teal-100 to-teal-200 rounded-xl flex items-center justify-center mb-4">
-                        <!-- PieChart -->
-                        <svg class="w-6 h-6 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
-                        </svg>
-                    </div>
-                    <div class="absolute -top-3 -right-3 w-8 h-8 bg-gradient-to-br from-teal-500 to-teal-600 text-white rounded-full flex items-center justify-center font-bold">
-                        4
-                    </div>
-                    <h3 class="text-xl font-bold text-slate-900 mb-2">Share Profits</h3>
-                    <p class="text-gray-600">Returns distributed transparently to all members</p>
-                </div>
-            </div>
-        </div>
+                <div class="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 border border-gray-100 h-full"> ... </div></div> ... </div>
     </div>
 
     <!-- Trust Section -->

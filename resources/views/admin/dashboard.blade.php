@@ -10,7 +10,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-slate-500">Total Users</p>
-                    <p class="text-3xl font-bold text-navy mt-1">{{ $stats['total_users'] }}</p>
+                    <p class="text-3xl font-bold text-navy mt-1">{{ $stats['total_users'] ?? 0 }}</p>
                 </div>
                 <div class="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center shadow-sm">
                     <svg class="w-6 h-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -25,7 +25,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-slate-500">Active Subscriptions</p>
-                    <p class="text-3xl font-bold text-navy mt-1">{{ $stats['active_subscriptions'] }}</p>
+                    <p class="text-3xl font-bold text-navy mt-1">{{ $stats['active_subscriptions'] ?? 0 }}</p>
                 </div>
                 <div class="w-12 h-12 rounded-full bg-teal-100 flex items-center justify-center shadow-sm">
                     <svg class="w-6 h-6 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -40,7 +40,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-slate-500">Total Revenue</p>
-                    <p class="text-3xl font-bold text-navy mt-1">₹{{ number_format($stats['total_revenue'], 0) }}</p>
+                    <p class="text-3xl font-bold text-navy mt-1">₹{{ number_format($stats['total_revenue'] ?? 0, 0) }}</p>
                 </div>
                 <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center shadow-sm">
                     <svg class="w-6 h-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -55,7 +55,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-slate-500">Active Projects</p>
-                    <p class="text-3xl font-bold text-navy mt-1">{{ $stats['active_projects'] }}</p>
+                    <p class="text-3xl font-bold text-navy mt-1">{{ $stats['active_projects'] ?? 0 }}</p>
                 </div>
                 <div class="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center shadow-sm">
                     <svg class="w-6 h-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -73,9 +73,11 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-blue-600">Total Invested</p>
-                    <p class="text-2xl font-bold text-navy mt-1">₹{{ number_format($stats['total_invested'], 0) }}</p>
+                    <p class="text-2xl font-bold text-navy mt-1">₹{{ number_format($stats['total_invested'] ?? 0, 0) }}</p>
                 </div>
+                @if(Route::has('admin.investments.index'))
                 <a href="{{ route('admin.investments.index') }}" class="text-blue-600 hover:text-blue-700 text-sm font-medium">View →</a>
+                @endif
             </div>
         </div>
         
@@ -84,20 +86,22 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-green-600">Profits Distributed</p>
-                    <p class="text-2xl font-bold text-navy mt-1">₹{{ number_format($stats['total_profits_distributed'], 0) }}</p>
+                    <p class="text-2xl font-bold text-navy mt-1">₹{{ number_format($stats['total_profits_distributed'] ?? 0, 0) }}</p>
                 </div>
+                @if(Route::has('admin.profits.index'))
                 <a href="{{ route('admin.profits.index') }}" class="text-green-600 hover:text-green-700 text-sm font-medium">View →</a>
+                @endif
             </div>
         </div>
         
         <!-- Pending Distributions -->
-        <div class="card p-6 {{ $stats['pending_distributions'] > 0 ? 'bg-gradient-to-br from-yellow-50 to-amber-50 border-yellow-100' : '' }}">
+        <div class="card p-6 {{ ($stats['pending_distributions'] ?? 0) > 0 ? 'bg-gradient-to-br from-yellow-50 to-amber-50 border-yellow-100' : '' }}">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm font-medium {{ $stats['pending_distributions'] > 0 ? 'text-yellow-600' : 'text-slate-500' }}">Pending Distributions</p>
-                    <p class="text-2xl font-bold text-navy mt-1">{{ $stats['pending_distributions'] }}</p>
+                    <p class="text-sm font-medium {{ ($stats['pending_distributions'] ?? 0) > 0 ? 'text-yellow-600' : 'text-slate-500' }}">Pending Distributions</p>
+                    <p class="text-2xl font-bold text-navy mt-1">{{ $stats['pending_distributions'] ?? 0 }}</p>
                 </div>
-                @if($stats['pending_distributions'] > 0)
+                @if(($stats['pending_distributions'] ?? 0) > 0 && Route::has('admin.profits.index'))
                 <a href="{{ route('admin.profits.index') }}?status=pending" class="px-3 py-1.5 bg-yellow-500 text-white text-xs font-semibold rounded-lg hover:bg-yellow-600 transition">
                     Review
                 </a>
@@ -109,7 +113,7 @@
     <!-- Quick Actions & Recent Payments -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Quick Actions -->
-        <div class="bg-gradient-to-br from-navy to-slate-800 rounded-xl shadow-lg p-6 text-white">
+        <div class="bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl shadow-lg p-6 text-white">
             <h3 class="text-lg font-bold mb-4">Quick Actions</h3>
             <div class="space-y-3">
                 <a href="{{ route('admin.users.index') }}" class="flex items-center gap-3 p-3 rounded-lg bg-white/10 hover:bg-white/20 transition">
@@ -124,18 +128,23 @@
                     </svg>
                     <span class="text-sm font-medium">Manage Projects</span>
                 </a>
-                <a href="{{ route('admin.investments.index') }}" class="flex items-center gap-3 p-3 rounded-lg bg-white/10 hover:bg-white/20 transition">
+                @if(Route::has('admin.payments.index'))
+                <a href="{{ route('admin.payments.index') }}" class="flex items-center gap-3 p-3 rounded-lg bg-white/10 hover:bg-white/20 transition">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                     </svg>
-                    <span class="text-sm font-medium">View Investments</span>
+                    <span class="text-sm font-medium">View Payments</span>
                 </a>
-                <a href="{{ route('admin.profits.create') }}" class="flex items-center gap-3 p-3 rounded-lg bg-teal-500 hover:bg-teal-600 transition">
+                @endif
+                @if(Route::has('admin.settings.payment-gateway'))
+                <a href="{{ route('admin.settings.payment-gateway') }}" class="flex items-center gap-3 p-3 rounded-lg bg-teal-500 hover:bg-teal-600 transition">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
-                    <span class="text-sm font-medium">Declare Profit</span>
+                    <span class="text-sm font-medium">Payment Settings</span>
                 </a>
+                @endif
             </div>
         </div>
 
@@ -155,7 +164,7 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">
-                        @forelse($stats['recent_payments'] as $payment)
+                        @forelse($stats['recent_payments'] ?? [] as $payment)
                         <tr class="hover:bg-slate-50/50 transition">
                             <td class="px-6 py-3">
                                 <div class="flex items-center">
@@ -167,16 +176,16 @@
                                     </div>
                                 </div>
                             </td>
-                            <td class="px-6 py-3 text-sm font-bold text-navy">₹{{ number_format($payment->amount, 0) }}</td>
+                            <td class="px-6 py-3 text-sm font-bold text-navy">₹{{ number_format($payment->amount ?? 0, 0) }}</td>
                             <td class="px-6 py-3">
                                 <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium 
                                     {{ $payment->status == 'succeeded' ? 'bg-green-100 text-green-800' : '' }}
                                     {{ $payment->status == 'pending' ? 'bg-yellow-100 text-yellow-800' : '' }}
                                     {{ $payment->status == 'failed' ? 'bg-red-100 text-red-800' : '' }}">
-                                    {{ ucfirst($payment->status) }}
+                                    {{ ucfirst($payment->status ?? 'N/A') }}
                                 </span>
                             </td>
-                            <td class="px-6 py-3 text-sm text-slate-500">{{ $payment->created_at->format('M d, Y') }}</td>
+                            <td class="px-6 py-3 text-sm text-slate-500">{{ $payment->created_at?->format('M d, Y') ?? '-' }}</td>
                         </tr>
                         @empty
                         <tr>
