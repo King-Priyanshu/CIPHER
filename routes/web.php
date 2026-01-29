@@ -6,6 +6,7 @@ use App\Http\Controllers\Public\PublicPageController;
 use App\Http\Controllers\Subscriber\DashboardController as SubscriberDashboard;
 use App\Http\Controllers\Subscriber\ProjectController as SubscriberProjects;
 use App\Http\Controllers\Subscriber\RewardController as SubscriberRewards;
+use App\Http\Controllers\Subscriber\InvestmentController as SubscriberInvestments;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\RazorpayWebhookController;
 
@@ -37,6 +38,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [SubscriberDashboard::class, 'index'])->name('subscriber.dashboard');
     Route::get('/projects', [SubscriberProjects::class, 'index'])->name('subscriber.projects.index');
     Route::get('/rewards', [SubscriberRewards::class, 'index'])->name('subscriber.rewards.index');
+    
+    // Investments & Profits
+    Route::get('/investments', [SubscriberInvestments::class, 'index'])->name('subscriber.investments.index');
+    Route::get('/profits', [SubscriberInvestments::class, 'profits'])->name('subscriber.profits.index');
     
     // Billing & Subscription
     Route::get('/billing', [App\Http\Controllers\Subscriber\BillingController::class, 'index'])->name('subscriber.billing.index');

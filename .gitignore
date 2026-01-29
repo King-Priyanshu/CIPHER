@@ -12,6 +12,7 @@
 .env
 .env.backup
 .env.production
+.env.local
 .phpunit.result.cache
 Homestead.json
 Homestead.yaml
@@ -20,3 +21,6 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+*.log
+.DS_Store
+Thumbs.db
