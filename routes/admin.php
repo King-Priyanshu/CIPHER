@@ -10,6 +10,9 @@ use App\Http\Controllers\Admin\ContentPageController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\InvestmentController;
 use App\Http\Controllers\Admin\ProfitDistributionController;
+use App\Http\Controllers\Admin\PaymentController;
+use App\Http\Controllers\Admin\InvoiceController;
+use App\Http\Controllers\Admin\SettingsController;
 
 use App\Http\Controllers\Admin\AdminLoginController;
 
@@ -50,4 +53,17 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('profits', [ProfitDistributionController::class, 'store'])->name('profits.store');
     Route::get('profits/{profit}', [ProfitDistributionController::class, 'show'])->name('profits.show');
     Route::post('profits/{profit}/distribute', [ProfitDistributionController::class, 'distribute'])->name('profits.distribute');
+
+    // Payments & Invoices
+    Route::get('payments', [PaymentController::class, 'index'])->name('payments.index');
+    Route::get('payments/{payment}', [PaymentController::class, 'show'])->name('payments.show');
+    
+    Route::get('invoices', [InvoiceController::class, 'index'])->name('invoices.index');
+    Route::get('invoices/{invoice}', [InvoiceController::class, 'show'])->name('invoices.show');
+    Route::get('invoices/{invoice}/download', [InvoiceController::class, 'download'])->name('invoices.download');
+    Route::post('invoices/generate/{payment}', [InvoiceController::class, 'generate'])->name('invoices.generate');
+
+    // Settings
+    Route::get('settings/payment-gateway', [SettingsController::class, 'paymentGateway'])->name('settings.payment-gateway');
+    Route::put('settings/payment-gateway', [SettingsController::class, 'updatePaymentGateway'])->name('settings.payment-gateway.update');
 });

@@ -13,15 +13,19 @@ class Invoice extends Model
         'user_id',
         'payment_id',
         'invoice_number',
+        'razorpay_invoice_id',
         'amount',
         'tax',
         'total',
+        'status',
         'issued_at',
+        'paid_at',
         'pdf_url',
     ];
 
     protected $casts = [
         'issued_at' => 'datetime',
+        'paid_at' => 'datetime',
         'amount' => 'decimal:2',
         'tax' => 'decimal:2',
         'total' => 'decimal:2',
