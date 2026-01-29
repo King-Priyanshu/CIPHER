@@ -62,8 +62,8 @@ This project is fully scaffolded and ready for your local environment.
 ## 🔑 Default Credentials
 
 **Super Admin**
-- **Email**: `admin@cipher.com`
-- **Password**: `password`
+- **Email**: `kya karo ge jann ke `
+- **Password**: `batya nhi jata `
 
 ---
 
