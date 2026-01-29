@@ -1,67 +1,77 @@
-<x-layouts.admin>
-    <div class="mb-6 flex justify-between items-center">
-        <h2 class="text-2xl font-bold text-white">Projects</h2>
-        <a href="{{ route('admin.projects.create') }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700">
-            + New Project
-        </a>
-    </div>
+@extends('components.layouts.admin')
 
-    @if(session('success'))
-        <div class="bg-green-900 border border-green-700 text-green-300 px-4 py-3 rounded mb-4">
-            {{ session('success') }}
+@section('page_title', 'Projects')
+
+@section('content')
+    <div class="card">
+        <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+            <h3 class="text-xl font-bold text-navy">All Projects</h3>
+            <a href="{{ route('admin.projects.create') }}" class="btn-primary">
+                + New Project
+            </a>
         </div>
-    @endif
 
-    <div class="bg-gray-800 rounded-lg shadow border border-gray-700 overflow-hidden">
+        @if(session('success'))
+            <div class="mb-4 p-4 rounded-lg bg-light-teal text-teal border border-teal/20">
+                {{ session('success') }}
+            </div>
+        @endif
+
         <div class="overflow-x-auto">
-            <table class="w-full text-left text-gray-300">
-                <thead class="bg-gray-900 text-gray-400 uppercase text-xs">
+            <table class="data-table">
+                <thead>
                     <tr>
-                        <th class="px-6 py-3">Title</th>
-                        <th class="px-6 py-3">Status</th>
-                        <th class="px-6 py-3">Fund Goal</th>
-                        <th class="px-6 py-3">Current Fund</th>
-                        <th class="px-6 py-3">Dates</th>
-                        <th class="px-6 py-3">Actions</th>
+                        <th>Title</th>
+                        <th>Status</th>
+                        <th>Fund Goal</th>
+                        <th>Current Fund</th>
+                        <th>Dates</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-700">
+                <tbody>
                     @forelse($projects as $project)
                     <tr>
-                        <td class="px-6 py-4 font-medium text-white">{{ $project->title }}</td>
-                        <td class="px-6 py-4">
-                            <span class="px-2 py-1 text-xs rounded {{ $project->status == 'active' ? 'bg-green-900 text-green-300' : ($project->status == 'completed' ? 'bg-blue-900 text-blue-300' : 'bg-gray-600 text-gray-300') }}">
-                                {{ ucfirst($project->status) }}
-                            </span>
-                        </td>
-                        <td class="px-6 py-4">${{ number_format($project->fund_goal, 2) }}</td>
-                        <td class="px-6 py-4">${{ number_format($project->current_fund, 2) }}</td>
-                        <td class="px-6 py-4 text-sm">
-                            {{ $project->starts_at ? $project->starts_at->format('M d, Y') : 'Not set' }}
-                            @if($project->ends_at)
-                                <br><span class="text-gray-500">to {{ $project->ends_at->format('M d, Y') }}</span>
+                        <td class="font-medium text-navy">{{ $project->title }}</td>
+                        <td>
+                            @if($project->status == 'active')
+                                <span class="badge-success">Active</span>
+                            @elseif($project->status == 'completed')
+                                <span class="badge-purple">Completed</span>
+                            @elseif($project->status == 'cancelled')
+                                <span class="badge-error">Cancelled</span>
+                            @else
+                                <span class="badge">Draft</span>
                             @endif
                         </td>
-                        <td class="px-6 py-4">
-                            <a href="{{ route('admin.projects.edit', $project) }}" class="text-indigo-400 hover:text-indigo-300 mr-3">Edit</a>
+                        <td class="font-numbers text-slate">${{ number_format($project->fund_goal, 2) }}</td>
+                        <td class="font-numbers text-teal font-semibold">${{ number_format($project->current_fund, 2) }}</td>
+                        <td class="text-slate text-sm">
+                            {{ $project->starts_at ? $project->starts_at->format('M d, Y') : 'Not set' }}
+                            @if($project->ends_at)
+                                <br><span class="text-xs text-slate/70">to {{ $project->ends_at->format('M d, Y') }}</span>
+                            @endif
+                        </td>
+                        <td>
+                            <a href="{{ route('admin.projects.edit', $project) }}" class="text-teal hover:text-navy font-medium mr-3 transition-colors">Edit</a>
                             <form action="{{ route('admin.projects.destroy', $project) }}" method="POST" class="inline">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="text-red-400 hover:text-red-300" onclick="return confirm('Are you sure?')">Delete</button>
+                                <button type="submit" class="text-error hover:text-red-700 font-medium transition-colors" onclick="return confirm('Are you sure?')">Delete</button>
                             </form>
                         </td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="6" class="px-6 py-4 text-center text-gray-500">No projects found.</td>
+                        <td colspan="6" class="px-6 py-8 text-center text-slate">No projects found.</td>
                     </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
-    </div>
 
-    <div class="mt-4">
-        {{ $projects->links() }}
+        <div class="mt-6">
+            {{ $projects->links() }}
+        </div>
     </div>
-</x-layouts.admin>
+@endsection

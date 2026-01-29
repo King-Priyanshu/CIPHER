@@ -2,12 +2,190 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-    body {
-        @apply antialiased text-gray-900;
-    }
+/* =========================
+   DESIGN TOKENS
+   ========================= */
+:root {
+    --color-navy: #1A2F4B;
+    --color-teal: #00BFA6;
+    --color-border: #E2E8F0;
+}
 
-    h1, h2, h3, h4, h5, h6 {
-        @apply font-bold tracking-tight text-gray-900;
-    }
+/* =========================
+   CUSTOM UTILITIES
+   ========================= */
+.bg-navy {
+    background-color: var(--color-navy);
+}
+
+.text-navy {
+    color: var(--color-navy);
+}
+
+.border-navy {
+    border-color: var(--color-navy);
+}
+
+.bg-teal {
+    background-color: var(--color-teal);
+}
+
+.text-teal {
+    color: var(--color-teal);
+}
+
+.border-teal {
+    border-color: var(--color-teal);
+}
+
+.bg-gray-soft {
+    background-color: #F8FAFC;
+}
+
+/* Gradient Hero Background */
+.gradient-hero {
+    background: linear-gradient(135deg, #1A2F4B 0%, #0D1B2A 100%);
+}
+
+/* Text Colors */
+.text-slate {
+    color: #64748B;
+}
+
+.text-error {
+    color: #DC2626;
+}
+
+/* Light Teal Background */
+.light-teal {
+    background-color: rgba(0, 191, 166, 0.1);
+}
+
+/* Sidebar Styling */
+.sidebar {
+    background: linear-gradient(180deg, #1A2F4B 0%, #0D1B2A 100%);
+}
+
+.sidebar-link {
+    @apply flex items-center px-4 py-3 text-gray-300 rounded-lg transition-colors;
+}
+
+.sidebar-link:hover {
+    @apply bg-white/10 text-white;
+}
+
+.sidebar-link.active {
+    @apply bg-teal text-white font-semibold;
+}
+
+/* =========================
+   GLOBAL
+   ========================= */
+body {
+    font-family: Inter, sans-serif;
+    color: var(--color-navy);
+}
+
+/* =========================
+   CARD
+   ========================= */
+.card {
+    @apply bg-white rounded-xl p-6;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+/* =========================
+   INPUT
+   ========================= */
+.input-field {
+    @apply w-full text-sm rounded-lg bg-white transition;
+    padding: 0.65rem 1rem;
+    border: 1px solid var(--color-border);
+}
+
+.input-field:focus {
+    outline: none;
+    border-color: var(--color-teal);
+    box-shadow: 0 0 0 3px rgba(0, 191, 166, .15);
+}
+
+/* =========================
+   BUTTONS
+   ========================= */
+.btn-primary {
+    @apply inline-flex items-center justify-center px-6 py-2.5 text-white font-semibold rounded-lg transition shadow-md hover:shadow-lg transform hover:-translate-y-0.5;
+    background: linear-gradient(135deg, #00BFA6, #0099cc);
+}
+
+/* =========================
+   TABLE
+   ========================= */
+.data-table {
+    @apply w-full border-collapse bg-white;
+}
+
+.data-table thead {
+    background: #f8fafc;
+}
+
+.data-table th {
+    @apply text-xs uppercase font-bold text-slate-500 px-5 py-4;
+    border-bottom: 1px solid var(--color-border);
+    border-right: 1px solid var(--color-border);
+}
+
+.data-table th:last-child {
+    border-right: none;
+}
+
+.data-table td {
+    @apply px-5 py-4 text-sm text-slate-700 align-middle;
+    border-bottom: 1px solid var(--color-border);
+    border-right: 1px solid var(--color-border);
+}
+
+.data-table td:last-child {
+    border-right: none;
+}
+
+.data-table tbody tr:hover {
+    background: rgba(0, 191, 166, .04);
+}
+
+.data-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* =========================
+   BADGES
+   ========================= */
+.badge {
+    @apply text-xs font-semibold px-2.5 py-1 rounded-md;
+}
+
+.badge-success {
+    background: rgba(16, 185, 129, .15);
+    color: #065f46;
+}
+
+/* =========================
+   ACTION BUTTONS
+   ========================= */
+.action-btn {
+    @apply text-xs font-semibold px-3 py-1.5 rounded-md transition;
+}
+
+.action-view {
+    background: rgba(0, 191, 166, .15);
+    color: #006b5f;
+}
+
+.action-edit {
+    background: rgba(245, 158, 11, .15);
+    color: #92400e;
+}
+
+.action-delete {
+    background: rgba(239, 68, 68, .15);
+    color: #991b1b;
 }

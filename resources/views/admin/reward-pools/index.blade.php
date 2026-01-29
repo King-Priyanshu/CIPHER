@@ -1,70 +1,78 @@
-<x-layouts.admin>
-    <div class="mb-6 flex justify-between items-center">
-        <h2 class="text-2xl font-bold text-white">Reward Pools</h2>
-        <a href="{{ route('admin.reward-pools.create') }}" class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700">
-            + New Reward Pool
-        </a>
-    </div>
+@extends('components.layouts.admin')
 
-    @if(session('success'))
-        <div class="bg-green-900 border border-green-700 text-green-300 px-4 py-3 rounded mb-4">
-            {{ session('success') }}
+@section('page_title', 'Reward Pools')
+
+@section('content')
+    <div class="card">
+        <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+            <h3 class="text-xl font-bold text-navy">Reward Pools</h3>
+            <a href="{{ route('admin.reward-pools.create') }}" class="btn-primary">
+                + New Reward Pool
+            </a>
         </div>
-    @endif
 
-    <div class="bg-gray-800 rounded-lg shadow border border-gray-700 overflow-hidden">
+        @if(session('success'))
+            <div class="mb-4 p-4 rounded-lg bg-light-teal text-teal border border-teal/20">
+                {{ session('success') }}
+            </div>
+        @endif
+
         <div class="overflow-x-auto">
-            <table class="w-full text-left text-gray-300">
-                <thead class="bg-gray-900 text-gray-400 uppercase text-xs">
+            <table class="data-table">
+                <thead>
                     <tr>
-                        <th class="px-6 py-3">Project</th>
-                        <th class="px-6 py-3">Total Amount</th>
-                        <th class="px-6 py-3">Distributed</th>
-                        <th class="px-6 py-3">Status</th>
-                        <th class="px-6 py-3">Distribution Date</th>
-                        <th class="px-6 py-3">Actions</th>
+                        <th>Project</th>
+                        <th>Total Amount</th>
+                        <th>Distributed</th>
+                        <th>Status</th>
+                        <th>Distribution Date</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-700">
+                <tbody>
                     @forelse($pools as $pool)
                     <tr>
-                        <td class="px-6 py-4 font-medium text-white">{{ $pool->project->title ?? 'N/A' }}</td>
-                        <td class="px-6 py-4 text-green-400">${{ number_format($pool->total_amount, 2) }}</td>
-                        <td class="px-6 py-4">${{ number_format($pool->distributed_amount, 2) }}</td>
-                        <td class="px-6 py-4">
-                            <span class="px-2 py-1 text-xs rounded {{ $pool->status == 'distributed' ? 'bg-green-900 text-green-300' : ($pool->status == 'pending' ? 'bg-yellow-900 text-yellow-300' : 'bg-gray-600 text-gray-300') }}">
-                                {{ ucfirst($pool->status ?? 'pending') }}
-                            </span>
+                        <td class="font-medium text-navy">{{ $pool->project->title ?? 'N/A' }}</td>
+                        <td class="font-numbers text-teal font-semibold">${{ number_format($pool->total_amount, 2) }}</td>
+                        <td class="font-numbers text-slate">${{ number_format($pool->distributed_amount, 2) }}</td>
+                        <td>
+                            @if($pool->status == 'distributed')
+                                <span class="badge-success">Distributed</span>
+                            @elseif($pool->status == 'pending')
+                                <span class="badge-warning">Pending</span>
+                            @else
+                                <span class="badge">Draft</span>
+                            @endif
                         </td>
-                        <td class="px-6 py-4 text-sm">
+                        <td class="text-slate text-sm">
                             {{ $pool->distribution_date ? $pool->distribution_date->format('M d, Y') : 'Not set' }}
                         </td>
-                        <td class="px-6 py-4">
+                        <td>
                             @if($pool->status != 'distributed')
                                 <form action="{{ route('admin.reward-pools.distribute', $pool) }}" method="POST" class="inline">
                                     @csrf
-                                    <button type="submit" class="text-green-400 hover:text-green-300 mr-3" onclick="return confirm('Distribute rewards?')">Distribute</button>
+                                    <button type="submit" class="text-success hover:text-green-700 font-medium mr-3 transition-colors" onclick="return confirm('Distribute rewards?')">Distribute</button>
                                 </form>
                             @endif
-                            <a href="{{ route('admin.reward-pools.edit', $pool) }}" class="text-indigo-400 hover:text-indigo-300 mr-3">Edit</a>
+                            <a href="{{ route('admin.reward-pools.edit', $pool) }}" class="text-teal hover:text-navy font-medium mr-3 transition-colors">Edit</a>
                             <form action="{{ route('admin.reward-pools.destroy', $pool) }}" method="POST" class="inline">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="text-red-400 hover:text-red-300" onclick="return confirm('Are you sure?')">Delete</button>
+                                <button type="submit" class="text-error hover:text-red-700 font-medium transition-colors" onclick="return confirm('Are you sure?')">Delete</button>
                             </form>
                         </td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="6" class="px-6 py-4 text-center text-gray-500">No reward pools found.</td>
+                        <td colspan="6" class="px-6 py-8 text-center text-slate">No reward pools found.</td>
                     </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
-    </div>
 
-    <div class="mt-4">
-        {{ $pools->links() }}
+        <div class="mt-6">
+            {{ $pools->links() }}
+        </div>
     </div>
-</x-layouts.admin>
+@endsection

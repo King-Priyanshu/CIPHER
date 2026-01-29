@@ -4,15 +4,17 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
 class AuthenticatedSessionController extends Controller
 {
     /**
      * Display the login view.
      */
-    public function create()
+    public function create(): View
     {
         return view('auth.login');
     }
@@ -20,24 +22,34 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
-    public function store(LoginRequest $request)
+    public function store(LoginRequest $request): RedirectResponse
     {
         $request->authenticate();
 
         $request->session()->regenerate();
 
+        // Get the authenticated user
+        $user = $request->user();
+
+        // Check for explicit redirect parameter (from home page checkout links)
+        $redirectUrl = $request->query('redirect');
+        if ($redirectUrl && str_starts_with($redirectUrl, url('/'))) {
+            return redirect($redirectUrl);
+        }
+
         // Redirect based on role
-        if ($request->user()->hasRole('admin')) {
+        if ($user->hasRole('admin')) {
             return redirect()->intended(route('admin.dashboard'));
         }
 
+        // Default redirect for subscribers and other users
         return redirect()->intended(route('subscriber.dashboard'));
     }
 
     /**
      * Destroy an authenticated session.
      */
-    public function destroy(Request $request)
+    public function destroy(Request $request): RedirectResponse
     {
         Auth::guard('web')->logout();
 

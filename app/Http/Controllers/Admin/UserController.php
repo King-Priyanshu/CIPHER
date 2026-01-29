@@ -16,7 +16,7 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        $query = User::with('roles');
+        $query = User::with('role');
 
         if ($request->has('search')) {
             $search = $request->input('search');
@@ -36,7 +36,7 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        $user->load(['roles', 'subscription', 'projects']);
+        $user->load(['role', 'subscription', 'projects']);
         return view('admin.users.show', compact('user'));
     }
 
@@ -57,8 +57,7 @@ class UserController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$user->id],
-            'roles' => ['array'],
-            'roles.*' => ['exists:roles,id'],
+            'role' => ['exists:roles,id'],
         ]);
 
         $user->update([
@@ -66,10 +65,8 @@ class UserController extends Controller
             'email' => $request->email,
         ]);
 
-        if ($request->role) {
-            // Assuming single role selection for simplicity, or modify for multiple
-            $user->roles()->sync([$request->role]); 
-            // If the UI sends an array of roles: $user->roles()->sync($request->roles);
+        if ($request->has('role')) {
+            $user->update(['role_id' => $request->role]);
         }
 
         return redirect()->route('admin.users.index')->with('success', 'User updated successfully.');

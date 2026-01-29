@@ -18,6 +18,7 @@ class SubscriptionPlan extends Model
         'interval',
         'trial_days',
         'is_active',
+        'razorpay_plan_id',
     ];
 
     protected $casts = [
@@ -25,6 +26,14 @@ class SubscriptionPlan extends Model
         'trial_days' => 'integer',
         'price' => 'decimal:2',
     ];
+
+    /**
+     * Get the route key for the model.
+     */
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
 
     public function subscriptions()
     {

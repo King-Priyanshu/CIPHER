@@ -8,7 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable implements MustVerifyEmail
+class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
@@ -23,6 +23,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'password',
         'role_id',
         'terms_accepted_at',
+        'razorpay_customer_id',
+        'phone',
     ];
 
     /**
@@ -51,6 +53,14 @@ class User extends Authenticatable implements MustVerifyEmail
     public function role()
     {
         return $this->belongsTo(Role::class);
+    }
+
+    /**
+     * Get roles as a collection (for compatibility with views using plural).
+     */
+    public function getRolesAttribute()
+    {
+        return $this->role ? collect([$this->role]) : collect();
     }
 
     /**
@@ -108,5 +118,20 @@ class User extends Authenticatable implements MustVerifyEmail
     public function activityLogs()
     {
         return $this->hasMany(ActivityLog::class);
+    }
+
+    /**
+     * Check if user has an active subscription.
+     */
+    public function hasActiveSubscription(): bool
+    {
+        $subscription = $this->subscription;
+
+        if (!$subscription) {
+            return false;
+        }
+
+        return $subscription->status === 'active' && 
+               ($subscription->ends_at === null || $subscription->ends_at->isFuture());
     }
 }

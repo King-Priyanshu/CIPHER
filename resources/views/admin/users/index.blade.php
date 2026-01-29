@@ -1,93 +1,138 @@
-<x-layouts.admin>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-200 leading-tight">
-            {{ __('User Management') }}
-        </h2>
-    </x-slot>
+@extends('components.layouts.admin')
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-100">
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="text-lg font-medium text-gray-200">All Users</h3>
-                        
-                        <form method="GET" action="{{ route('admin.users.index') }}" class="flex">
-                            <input type="text" name="search" value="{{ request('search') }}" placeholder="Search users..." class="bg-gray-700 text-gray-200 border-gray-600 rounded-l-md focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm">
-                            <button type="submit" class="px-4 py-2 bg-indigo-600 border border-transparent rounded-r-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:ring focus:ring-indigo-200 active:bg-indigo-600 disabled:opacity-25 transition">
-                                Search
-                            </button>
-                        </form>
-                    </div>
+@section('page_title', 'User Management')
 
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-700">
-                            <thead class="bg-gray-700">
-                                <tr>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                                        Name
-                                    </th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                                        Email
-                                    </th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                                        Role
-                                    </th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                                        Joined
-                                    </th>
-                                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-300 uppercase tracking-wider">
-                                        Actions
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-gray-800 divide-y divide-gray-700">
-                                @forelse ($users as $user)
-                                    <tr>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-100">
-                                            {{ $user->name }}
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                                            {{ $user->email }}
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                                            @foreach($user->roles as $role)
-                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200">
-                                                    {{ ucfirst($role->name) }}
-                                                </span>
-                                            @endforeach
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                                            {{ $user->created_at->format('M d, Y') }}
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                            <a href="{{ route('admin.users.show', $user) }}" class="text-indigo-400 hover:text-indigo-300 mr-3">View</a>
-                                            <a href="{{ route('admin.users.edit', $user) }}" class="text-yellow-400 hover:text-yellow-300 mr-3">Edit</a>
-                                            @if($user->id !== auth()->id())
-                                                <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="inline-block" onsubmit="return confirm('Are you sure?');">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="text-red-400 hover:text-red-300">Delete</button>
-                                                </form>
-                                            @endif
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="5" class="px-6 py-4 whitespace-nowrap text-sm text-gray-400 text-center">
-                                            No users found.
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                    
-                    <div class="mt-4">
-                        {{ $users->links() }}
-                    </div>
+@section('content')
+<div class="card">
+
+    <!-- HEADER + SEARCH -->
+    <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+        <div>
+            <h3 class="text-xl font-bold text-navy">All Users</h3>
+            <p class="text-sm text-slate-500 mt-1">
+                Manage all registered users and their roles.
+            </p>
+        </div>
+
+        <form method="GET" action="{{ route('admin.users.index') }}"
+              class="flex w-full sm:w-auto items-center gap-3">
+
+            <div class="relative w-full sm:w-80">
+                <input
+                    type="text"
+                    name="search"
+                    value="{{ request('search') }}"
+                    placeholder="Search users..."
+                    class="input-field h-11 pl-11 pr-4"
+                >
+                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                    <svg class="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
                 </div>
             </div>
-        </div>
+
+            <button type="submit" class="btn-primary h-11 px-6 text-sm">
+                Search
+            </button>
+        </form>
     </div>
-</x-layouts.admin>
+
+    <!-- TABLE -->
+    <div class="overflow-x-auto rounded-xl border border-gray-200">
+        <table class="data-table">
+
+            <thead>
+            <tr>
+                <th class="pl-6">User</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Joined</th>
+                <th class="text-right pr-6">Actions</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            @forelse ($users as $user)
+                <tr>
+
+                    <td class="pl-6">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-xl bg-teal-500 text-white font-bold flex items-center justify-center shadow-sm">
+                                {{ strtoupper(substr($user->name, 0, 1)) }}
+                            </div>
+                            <div>
+                                <div class="font-semibold text-sm text-navy">
+                                    {{ $user->name }}
+                                </div>
+                                <div class="text-xs text-slate-500 lg:hidden">
+                                    {{ $user->email }}
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+
+                    <td class="hidden lg:table-cell">
+                        {{ $user->email }}
+                    </td>
+
+                    <td>
+                        <div class="flex gap-2 flex-wrap">
+                            @foreach($user->roles as $role)
+                                <span class="badge {{ $role->slug === 'admin' ? 'bg-purple-100 text-purple-700' : 'badge-success' }}">
+                                    {{ ucfirst($role->name) }}
+                                </span>
+                            @endforeach
+                        </div>
+                    </td>
+
+                    <td class="whitespace-nowrap text-sm text-slate-600">
+                        {{ $user->created_at->format('M d, Y') }}
+                    </td>
+
+                    <td class="text-right pr-6">
+                        <div class="flex justify-end gap-2">
+                            <a href="{{ route('admin.users.show', $user) }}"
+                               class="action-btn action-view">View</a>
+
+                            <a href="{{ route('admin.users.edit', $user) }}"
+                               class="action-btn action-edit">Edit</a>
+
+                            @if($user->id !== auth()->id())
+                                <form method="POST"
+                                      action="{{ route('admin.users.destroy', $user) }}"
+                                      onsubmit="return confirm('Delete this user?')"
+                                      class="inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="action-btn action-delete">
+                                        Delete
+                                    </button>
+                                </form>
+                            @endif
+                        </div>
+                    </td>
+
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="5" class="text-center py-16 text-slate-400">
+                        <div class="flex flex-col items-center justify-center gap-2">
+                            <span class="text-3xl opacity-50">👥</span>
+                             <span>No users found</span>
+                        </div>
+                    </td>
+                </tr>
+            @endforelse
+            </tbody>
+
+        </table>
+    </div>
+
+    <div class="mt-6">
+        {{ $users->links() }}
+    </div>
+
+</div>
+@endsection
