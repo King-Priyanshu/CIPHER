@@ -25,13 +25,13 @@ class RewardPoolController extends Controller
     public function index()
     {
         $pools = RewardPool::with('project')->latest()->paginate(10);
-        return view('admin.rewards.index', compact('pools'));
+        return view('admin.reward-pools.index', compact('pools'));
     }
 
     public function create()
     {
         $projects = Project::where('status', 'active')->get();
-        return view('admin.rewards.create', compact('projects'));
+        return view('admin.reward-pools.create', compact('projects'));
     }
 
     public function store(Request $request)
@@ -39,19 +39,46 @@ class RewardPoolController extends Controller
         $validated = $request->validate([
             'project_id' => 'required|exists:projects,id',
             'total_amount' => 'required|numeric|min:0',
+            'distribution_date' => 'nullable|date',
         ]);
 
         $pool = RewardPool::create($validated);
 
-        // Auto-calculate rewards upon creation (simplification)
+        // Auto-calculate rewards upon creation
         $this->calculationService->calculateForPool($pool);
 
-        return redirect()->route('admin.rewards.index')->with('success', 'Reward Pool created and calculated.');
+        return redirect()->route('admin.reward-pools.index')->with('success', 'Reward Pool created and calculated.');
     }
 
-    public function distribute(RewardPool $pool)
+    public function edit(RewardPool $reward_pool)
     {
-        $this->distributionService->distribute($pool);
+        $projects = Project::where('status', 'active')->get();
+        return view('admin.reward-pools.edit', compact('reward_pool', 'projects'));
+    }
+
+    public function update(Request $request, RewardPool $reward_pool)
+    {
+        $validated = $request->validate([
+            'project_id' => 'required|exists:projects,id',
+            'total_amount' => 'required|numeric|min:0',
+            'distribution_date' => 'nullable|date',
+        ]);
+
+        $reward_pool->update($validated);
+
+        return redirect()->route('admin.reward-pools.index')->with('success', 'Reward Pool updated.');
+    }
+
+    public function destroy(RewardPool $reward_pool)
+    {
+        $reward_pool->delete();
+
+        return redirect()->route('admin.reward-pools.index')->with('success', 'Reward Pool deleted.');
+    }
+
+    public function distribute(RewardPool $reward_pool)
+    {
+        $this->distributionService->distribute($reward_pool);
         return redirect()->back()->with('success', 'Rewards distributed successfully.');
     }
 }
