@@ -33,7 +33,7 @@ class RegisteredUserController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'terms' => ['required', 'accepted'], // Mandatory as per wireframe
-            'referral_code' => ['required', 'string', 'exists:users,referral_code'],
+            'referral_code' => ['nullable', 'string', 'exists:users,referral_code'],
         ]);
 
         // Auto-create subscriber role if missing (to avoid manual seeding requirement)
@@ -49,21 +49,15 @@ class RegisteredUserController extends Controller
             \Illuminate\Support\Facades\Log::error('Registration failed: Could not create Subscriber role.');
             return back()->withErrors(['email' => 'System error: Could not initialize user role.'])->withInput();
         }
-        
+
         // Find referrer if referral code provided
         // Find referrer via Service
         $referrerId = null;
         if ($request->referral_code) {
-           // We can rely on service logic if we want, or keep specific validation here.
-           // Since validation 'exists:users,referral_code' already passed, user exists.
-           // We just need to check role.
-           
-           $referrer = User::where('referral_code', $request->referral_code)->first();
-           if ($referrer && ($referrer->hasRole('admin') || $referrer->hasRole('manager'))) {
-               $referrerId = $referrer->id;
-           } else {
-               return back()->withErrors(['referral_code' => 'Invalid referral code or referrer not authorized.'])->withInput();
-           }
+            $referrer = User::where('referral_code', $request->referral_code)->first();
+            if ($referrer) {
+                $referrerId = $referrer->id;
+            }
         }
 
         try {
@@ -73,7 +67,7 @@ class RegisteredUserController extends Controller
                 'password' => Hash::make($request->password),
                 'role_id' => $subscriberRole->id,
                 'terms_accepted_at' => Carbon::now(),
-                'referred_by' => $referredBy,
+                'referred_by' => $referrerId,
             ]);
 
             \Illuminate\Support\Facades\Log::info('User created successfully: ' . $user->id);

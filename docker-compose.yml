@@ -7,6 +7,7 @@ services:
         environment:
             SSL_MODE: 'off'
             PHP_OPCACHE_ENABLE: '0'
+            DB_HOST: mysql
         volumes:
             - '.:/var/www/html'
         networks:

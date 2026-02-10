@@ -2,53 +2,68 @@
 
 namespace App\Services\Payments;
 
+use App\Services\Payment\StripeService;
 use App\Models\Payment;
 use App\Models\User;
 use App\Models\UserSubscription;
+use App\Models\SubscriptionPlan;
+use Illuminate\Support\Facades\Log;
 
 class StripePaymentGateway implements PaymentGatewayInterface
 {
-    /**
-     * Create a new subscription for a user.
-     */
-    public function createSubscription(User $user, string $planId, array $options = []): UserSubscription
+    protected $stripe;
+
+    public function __construct(StripeService $stripe)
     {
-        // TODO: Implement Stripe subscription creation
-        // 1. Create or retrieve Stripe customer
-        // 2. Create Stripe subscription
-        // 3. Store subscription details locally
-        throw new \RuntimeException('Stripe subscription creation not implemented');
+        $this->stripe = $stripe;
     }
 
     /**
-     * Cancel an existing subscription.
+     * Charge the user a specific amount.
+     *
+     * @param  \App\Models\User  $user
+     * @param  float  $amount
+     * @param  string  $currency
+     * @param  string  $source  payment method token
+     * @return string  transaction_id
      */
-    public function cancelSubscription(UserSubscription $subscription): bool
+    public function charge($user, float $amount, string $currency, string $source): string
     {
-        // TODO: Implement Stripe subscription cancellation
-        throw new \RuntimeException('Stripe subscription cancellation not implemented');
+        $paymentIntent = $this->stripe->createPaymentIntent(
+            (int) $amount,
+            $currency,
+            [
+                'user_id' => $user->id,
+            ]
+        );
+
+        return $paymentIntent['id'] ?? 'failed';
     }
 
     /**
-     * Process a one-time payment.
+     * Subscribe the user to a recurring plan.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\SubscriptionPlan  $plan
+     * @return string  subscription_id
      */
-    public function processPayment(User $user, int $amount, string $currency = 'INR', array $options = []): Payment
+    public function subscribe($user, $plan): string
     {
-        // TODO: Implement Stripe payment processing
-        throw new \RuntimeException('Stripe payment processing not implemented');
+        // For Stripe, we need a payment method. This is a simplified version.
+        // In a real implementation, you would collect payment method first.
+        $subscription = $this->stripe->createSubscription($user, $plan, 'pm_card_visa');
+        return $subscription['subscription_id'] ?? 'failed';
     }
 
     /**
-     * Handle incoming webhook from Stripe.
+     * Cancel a subscription.
+     *
+     * @param  string  $subscriptionId
+     * @return bool
      */
-    public function handleWebhook(array $payload): void
+    public function cancelSubscription(string $subscriptionId): bool
     {
-        // TODO: Implement Stripe webhook handling
-        // Handle events like:
-        // - invoice.payment_succeeded
-        // - invoice.payment_failed
-        // - customer.subscription.updated
-        // - customer.subscription.deleted
+        return $this->stripe->cancelSubscription($subscriptionId);
     }
 
     /**
@@ -57,14 +72,5 @@ class StripePaymentGateway implements PaymentGatewayInterface
     public function getGatewayName(): string
     {
         return 'stripe';
-    }
-
-    /**
-     * Verify webhook signature.
-     */
-    public function verifyWebhookSignature(string $payload, string $signature): bool
-    {
-        // TODO: Implement Stripe webhook signature verification
-        return false;
     }
 }

@@ -13,21 +13,21 @@ use App\Http\Controllers\RazorpayWebhookController;
 
 // Public Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::get('/faq', function () { return view('public.faq'); })->name('faq');
+Route::get('/faq', function () {
+    return view('public.faq');
+})->name('faq');
 Route::get('/projects', [PublicProjects::class, 'index'])->name('projects.index');
 Route::get('/projects/{project}', [PublicProjects::class, 'show'])->name('projects.show');
 Route::get('/page/{slug}', [PublicPageController::class, 'show'])->name('page.show');
 
 // Webhook Routes (CSRF exempt)
 Route::post('/webhooks/stripe', [App\Http\Controllers\WebhookController::class, 'handleStripe'])
-    ->name('webhooks.stripe')
-    ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
+    ->name('webhooks.stripe');
 
 Route::post('/webhooks/razorpay', [RazorpayWebhookController::class, 'handle'])
-    ->name('webhooks.razorpay')
-    ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
+    ->name('webhooks.razorpay');
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
 // admin.php is loaded in bootstrap/app.php
 
 // Subscriber Routes
@@ -36,22 +36,26 @@ Route::middleware(['auth', 'verified'])->prefix('app')->group(function () {
     Route::get('/projects', [ProjectController::class, 'index'])->name('subscriber.projects.index');
     Route::get('/projects/{project}', [ProjectController::class, 'show'])->name('subscriber.projects.show');
     Route::post('/projects/{project}/invest', [ProjectController::class, 'invest'])->name('subscriber.projects.invest');
+    Route::get('/investments/pay/{investment}', [ProjectController::class, 'pay'])->name('subscriber.projects.pay');
+    Route::post('/investments/auto', [ProjectController::class, 'autoInvest'])->name('subscriber.projects.auto_invest');
+    Route::post('/checkout/investment/{investment}/create', [CheckoutController::class, 'createInvestmentOrder'])->name('checkout.investment.create');
+
     Route::get('/rewards', [SubscriberRewards::class, 'index'])->name('subscriber.rewards.index');
     Route::get('/referrals', [App\Http\Controllers\Subscriber\ReferralController::class, 'index'])->name('subscriber.referrals.index');
-    
+
     // Investments & Profits
     Route::get('/investments', [SubscriberInvestments::class, 'index'])->name('subscriber.investments.index');
     Route::get('/profits', [SubscriberInvestments::class, 'profits'])->name('subscriber.profits.index');
     Route::post('/profits/redeem', [App\Http\Controllers\Subscriber\RedemptionController::class, 'store'])->name('subscriber.profits.redeem');
     Route::get('/invoices/{invoice}/download', [App\Http\Controllers\Subscriber\InvoiceController::class, 'download'])->name('subscriber.invoices.download');
-    
+
     // Billing & Subscription
     Route::get('/billing', [App\Http\Controllers\Subscriber\BillingController::class, 'index'])->name('subscriber.billing.index');
     Route::get('/payments', [App\Http\Controllers\Subscriber\PaymentHistoryController::class, 'index'])->name('subscriber.payments.index');
     Route::get('/subscription', [App\Http\Controllers\Subscriber\SubscriptionController::class, 'index'])->name('subscriber.subscription.index');
     Route::post('/subscription/change-plan', [App\Http\Controllers\Subscriber\SubscriptionController::class, 'changePlan'])->name('subscriber.subscription.change-plan');
     Route::get('/card', [App\Http\Controllers\Subscriber\MembershipCardController::class, 'show'])->name('subscriber.card.show');
-    
+
     // Profile & Notifications
     Route::get('/notifications', [App\Http\Controllers\Subscriber\NotificationsController::class, 'index'])->name('subscriber.notifications.index');
     Route::get('/profile', [App\Http\Controllers\Subscriber\ProfileController::class, 'index'])->name('subscriber.profile.index');

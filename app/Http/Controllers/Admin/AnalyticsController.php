@@ -33,40 +33,40 @@ class AnalyticsController extends Controller
 
         // Revenue data for chart (last 30 days)
         $revenueData = Payment::select(
-                DB::raw('DATE(paid_at) as date'),
-                DB::raw('SUM(amount) as total')
-            )
+            DB::raw('DATE(paid_at) as date'),
+            DB::raw('SUM(amount) as total')
+        )
             ->where('status', 'succeeded')
             ->where('paid_at', '>=', now()->subDays(30))
             ->groupBy('date')
             ->orderBy('date')
             ->get();
 
-        $revenueLabels = $revenueData->pluck('date')->map(function($date) {
+        $revenueLabels = $revenueData->pluck('date')->map(function ($date) {
             return Carbon::parse($date)->format('M d');
         });
         $revenueValues = $revenueData->pluck('total');
 
         // User acquisition data (last 30 days)
         $userAcquisitionData = User::select(
-                DB::raw('DATE(created_at) as date'),
-                DB::raw('COUNT(*) as count')
-            )
+            DB::raw('DATE(created_at) as date'),
+            DB::raw('COUNT(*) as count')
+        )
             ->where('created_at', '>=', now()->subDays(30))
             ->groupBy('date')
             ->orderBy('date')
             ->get();
 
-        $userAcquisitionLabels = $userAcquisitionData->pluck('date')->map(function($date) {
+        $userAcquisitionLabels = $userAcquisitionData->pluck('date')->map(function ($date) {
             return Carbon::parse($date)->format('M d');
         });
         $userAcquisitionValues = $userAcquisitionData->pluck('count');
 
         // Investment distribution by project
         $investmentsByProject = ProjectInvestment::select(
-                'projects.title',
-                DB::raw('SUM(project_investments.amount) as total')
-            )
+            'projects.title',
+            DB::raw('SUM(project_investments.amount) as total')
+        )
             ->join('projects', 'projects.id', '=', 'project_investments.project_id')
             ->where('project_investments.status', 'active')
             ->groupBy('projects.title')
@@ -111,12 +111,17 @@ class AnalyticsController extends Controller
     /**
      * Calculate conversion rate.
      */
-    private function calculateConversionRate()
+    private function calculateConversionRate($daysAgo = 0)
     {
-        $totalUsers = User::count();
-        $payingUsers = User::whereHas('payments', function($query) {
-            $query->where('status', 'succeeded');
-        })->count();
+        $date = $daysAgo > 0 ? now()->subDays($daysAgo) : now();
+
+        $totalUsers = User::where('created_at', '<=', $date)->count();
+
+        $payingUsers = User::where('created_at', '<=', $date)
+            ->whereHas('payments', function ($query) use ($date) {
+                $query->where('status', 'succeeded')
+                    ->where('paid_at', '<=', $date);
+            })->count();
 
         return $totalUsers > 0 ? round(($payingUsers / $totalUsers) * 100, 2) : 0;
     }
@@ -169,23 +174,23 @@ class AnalyticsController extends Controller
     private function calculateUserActivity()
     {
         $totalUsers = User::count();
-        
-        $activeUsers = User::whereHas('payments', function($query) {
+
+        $activeUsers = User::whereHas('payments', function ($query) {
             $query->where('status', 'succeeded')
-                  ->where('paid_at', '>=', now()->subDays(30));
+                ->where('paid_at', '>=', now()->subDays(30));
         })->count();
 
         $newUsers = User::where('created_at', '>=', now()->subDays(30))->count();
 
-        $churnedUsers = User::whereDoesntHave('payments', function($query) {
+        $churnedUsers = User::whereDoesntHave('payments', function ($query) {
             $query->where('status', 'succeeded')
-                  ->where('paid_at', '>=', now()->subDays(30));
-        })->whereHas('payments', function($query) {
+                ->where('paid_at', '>=', now()->subDays(30));
+        })->whereHas('payments', function ($query) {
             $query->where('status', 'succeeded')
-                  ->whereBetween('paid_at', [
-                      now()->subDays(60),
-                      now()->subDays(31)
-                  ]);
+                ->whereBetween('paid_at', [
+                    now()->subDays(60),
+                    now()->subDays(31)
+                ]);
         })->count();
 
         return [
@@ -204,14 +209,14 @@ class AnalyticsController extends Controller
      */
     private function getSubscriptionPlanData()
     {
-        $plans = SubscriptionPlan::withCount('userSubscriptions')->get();
+        $plans = SubscriptionPlan::withCount('subscriptions')->get();
         $totalSubscriptions = UserSubscription::count();
 
-        return $plans->map(function($plan) use ($totalSubscriptions) {
+        return $plans->map(function ($plan) use ($totalSubscriptions) {
             return [
                 'name' => $plan->name,
-                'count' => $plan->user_subscriptions_count,
-                'percentage' => $totalSubscriptions > 0 ? round(($plan->user_subscriptions_count / $totalSubscriptions) * 100, 1) : 0
+                'count' => $plan->subscriptions_count,
+                'percentage' => $totalSubscriptions > 0 ? round(($plan->subscriptions_count / $totalSubscriptions) * 100, 1) : 0
             ];
         });
     }
@@ -221,16 +226,16 @@ class AnalyticsController extends Controller
      */
     private function getPaymentMethodsData()
     {
-        $payments = Payment::select('payment_method', DB::raw('COUNT(*) as count'))
+        $payments = Payment::select('gateway', DB::raw('COUNT(*) as count'))
             ->where('status', 'succeeded')
-            ->groupBy('payment_method')
+            ->groupBy('gateway')
             ->get();
 
         $totalPayments = Payment::where('status', 'succeeded')->count();
 
-        return $payments->map(function($payment) use ($totalPayments) {
+        return $payments->map(function ($payment) use ($totalPayments) {
             return [
-                'name' => ucfirst($payment->payment_method),
+                'name' => ucfirst($payment->gateway),
                 'count' => $payment->count,
                 'percentage' => $totalPayments > 0 ? round(($payment->count / $totalPayments) * 100, 1) : 0
             ];
@@ -273,36 +278,36 @@ class AnalyticsController extends Controller
     public function export(Request $request)
     {
         $type = $request->input('type', 'revenue');
-        
+
         switch ($type) {
             case 'revenue':
                 $fileName = 'revenue_report-' . now()->format('Y-m-d') . '.csv';
                 $query = Payment::with('user')->where('status', 'succeeded')->latest();
-                
+
                 $headers = [
                     'Content-Type' => 'text/csv',
                     'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
                 ];
 
-                $callback = function() use ($query) {
+                $callback = function () use ($query) {
                     $file = fopen('php://output', 'w');
                     fputcsv($file, ['Date', 'Payment ID', 'User', 'Amount', 'Method']);
 
-                    $query->chunk(100, function($payments) use ($file) {
+                    $query->chunk(100, function ($payments) use ($file) {
                         foreach ($payments as $payment) {
                             fputcsv($file, [
                                 $payment->created_at->format('Y-m-d H:i:s'),
                                 $payment->id,
                                 $payment->user->name ?? 'N/A',
                                 $payment->amount,
-                                $payment->payment_method
+                                $payment->gateway
                             ]);
                         }
                     });
 
                     fclose($file);
                 };
-                
+
                 return response()->stream($callback, 200, $headers);
 
             default:

@@ -16,6 +16,18 @@ class BillingController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
-        return view('subscriber.billing.index', compact('invoices'));
+        // Calculate statistics
+        $totalAmount = \App\Models\Invoice::where('user_id', $user->id)
+            ->sum('amount');
+
+        $paidInvoices = \App\Models\Invoice::where('user_id', $user->id)
+            ->where('status', 'paid')
+            ->count();
+
+        $pendingInvoices = \App\Models\Invoice::where('user_id', $user->id)
+            ->where('status', 'pending')
+            ->count();
+
+        return view('subscriber.billing.index', compact('invoices', 'totalAmount', 'paidInvoices', 'pendingInvoices'));
     }
 }

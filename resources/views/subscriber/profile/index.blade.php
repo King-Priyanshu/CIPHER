@@ -167,6 +167,68 @@
             </form>
         </div>
 
+        <!-- Security Settings -->
+        <div class="card p-6 md:p-8">
+            <div class="mb-6">
+                <h3 class="text-lg font-bold text-navy">Security Settings</h3>
+                <p class="text-sm text-slate-500 mt-1">Manage your account security preferences.</p>
+            </div>
+
+            <form method="post" action="{{ route('subscriber.profile.update') }}" class="space-y-6 max-w-xl">
+                @csrf
+                @method('patch')
+
+                <div class="flex items-center gap-3">
+                    <input type="hidden" name="name" value="{{ $user->name }}">
+                    <input type="hidden" name="email" value="{{ $user->email }}">
+                    <input type="hidden" name="participation_mode" value="{{ $user->participation_mode }}">
+                    
+                    <input 
+                        type="checkbox" 
+                        name="two_factor_enabled" 
+                        id="two_factor_enabled"
+                        {{ old('two_factor_enabled', $user->two_factor_enabled ?? false) ? 'checked' : '' }}
+                        class="w-5 h-5 rounded border-gray-300 text-teal-600 focus:ring-teal-500"
+                        aria-label="Enable Two-Factor Authentication"
+                    >
+                    <label for="two_factor_enabled" class="text-sm font-semibold text-navy cursor-pointer">
+                        Enable Two-Factor Authentication
+                    </label>
+                </div>
+
+                <div id="two-factor-methods" class="{{ old('two_factor_enabled', $user->two_factor_enabled ?? false) ? '' : 'opacity-50 pointer-events-none' }}">
+                    <div>
+                        <label for="two_factor_method" class="block text-sm font-semibold text-navy mb-1.5">Authentication Method</label>
+                        <select 
+                            name="two_factor_method" 
+                            id="two_factor_method"
+                            class="w-full rounded-lg border-gray-300 focus:border-teal-500 focus:ring-teal-500 text-navy"
+                        >
+                            <option value="email" {{ old('two_factor_method', $user->two_factor_method ?? 'email') === 'email' ? 'selected' : '' }}>
+                                Email Verification
+                            </option>
+                            <option value="sms" {{ old('two_factor_method', $user->two_factor_method ?? 'email') === 'sms' ? 'selected' : '' }}>
+                                SMS Code
+                            </option>
+                            <option value="authenticator" {{ old('two_factor_method', $user->two_factor_method ?? 'email') === 'authenticator' ? 'selected' : '' }}>
+                                Authenticator App (Google Authenticator)
+                            </option>
+                        </select>
+                        @error('two_factor_method') <p class="text-red-500 text-xs mt-1 font-medium">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-4 pt-2">
+                    <button type="submit" class="px-4 py-2 bg-navy hover:bg-slate-800 text-white text-sm font-bold rounded-lg transition shadow-sm">
+                        Save Security Settings
+                    </button>
+                    @if (session('status') === 'profile-updated')
+                        <p class="text-sm text-emerald-600 font-medium">Settings saved.</p>
+                    @endif
+                </div>
+            </form>
+        </div>
+
         <!-- Update Password -->
         <div class="card p-6 md:p-8">
             <div class="mb-6">
@@ -209,20 +271,35 @@
             </form>
         </div>
     </div>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const remindersEnabled = document.getElementById('payment_reminders_enabled');
-                const reminderMethods = document.getElementById('reminder-methods');
-                
-                if (remindersEnabled && reminderMethods) {
-                    remindersEnabled.addEventListener('change', function() {
-                        if (this.checked) {
-                            reminderMethods.classList.remove('opacity-50', 'pointer-events-none');
-                        } else {
-                            reminderMethods.classList.add('opacity-50', 'pointer-events-none');
-                        }
-                    });
-                }
-            });
-        </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const remindersEnabled = document.getElementById('payment_reminders_enabled');
+            const reminderMethods = document.getElementById('reminder-methods');
+            const twoFactorEnabled = document.getElementById('two_factor_enabled');
+            const twoFactorMethods = document.getElementById('two-factor-methods');
+            
+            if (remindersEnabled && reminderMethods) {
+                remindersEnabled.addEventListener('change', function() {
+                    if (this.checked) {
+                        reminderMethods.classList.remove('opacity-50', 'pointer-events-none');
+                        reminderMethods.style.animation = 'fadeIn 0.3s ease-out';
+                    } else {
+                        reminderMethods.classList.add('opacity-50', 'pointer-events-none');
+                    }
+                });
+            }
+
+            if (twoFactorEnabled && twoFactorMethods) {
+                twoFactorEnabled.addEventListener('change', function() {
+                    if (this.checked) {
+                        twoFactorMethods.classList.remove('opacity-50', 'pointer-events-none');
+                        twoFactorMethods.style.animation = 'fadeIn 0.3s ease-out';
+                    } else {
+                        twoFactorMethods.classList.add('opacity-50', 'pointer-events-none');
+                    }
+                });
+            }
+        });
+    </script>
 </x-layouts.subscriber>

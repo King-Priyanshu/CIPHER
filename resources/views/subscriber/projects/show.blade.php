@@ -4,26 +4,32 @@
     </x-slot:title>
 
     <div class="max-w-5xl mx-auto space-y-8">
-        
+
         <!-- Header / Hero Section -->
         <div class="relative bg-navy-900 rounded-3xl overflow-hidden shadow-2xl">
             <!-- Background Image with Overlay -->
-            <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('{{ $project->image_url ?? asset('images/project-placeholder.jpg') }}'); opacity: 0.3;"></div>
+            <div class="absolute inset-0 bg-cover bg-center"
+                style="background-image: url('{{ $project->image_url ?? asset('images/project-placeholder.jpg') }}'); opacity: 0.55;">
+            </div>
             <div class="absolute inset-0 bg-gradient-to-t from-navy-900 via-navy-900/80 to-transparent"></div>
 
             <div class="relative z-10 p-8 lg:p-12 text-white">
                 <div class="flex flex-wrap items-center gap-4 mb-4">
-                    <span class="bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                    <span
+                        class="bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
                         {{ $project->category ?? 'Investment' }}
                     </span>
-                    <span class="flex items-center gap-1.5 {{ $project->status === 'active' ? 'text-emerald-400' : 'text-slate-400' }} font-semibold text-sm">
-                        <span class="w-2 h-2 rounded-full {{ $project->status === 'active' ? 'bg-emerald-400' : 'bg-slate-400' }}"></span>
+                    <span
+                        class="flex items-center gap-1.5 {{ $project->status === 'active' ? 'text-emerald-400' : 'text-slate-400' }} font-semibold text-sm">
+                        <span
+                            class="w-2 h-2 rounded-full {{ $project->status === 'active' ? 'bg-emerald-400' : 'bg-slate-400' }}"></span>
                         {{ ucfirst($project->status) }}
                     </span>
                 </div>
 
                 <h1 class="text-4xl lg:text-5xl font-black tracking-tight mb-4">{{ $project->title }}</h1>
-                <p class="text-lg text-slate-300 max-w-2xl leading-relaxed">{{ Str::limit($project->description, 200) }}</p>
+                <p class="text-lg text-slate-300 max-w-2xl leading-relaxed">{{ Str::limit($project->description, 200) }}
+                </p>
 
                 <div class="mt-8 flex flex-wrap gap-6">
                     <div>
@@ -42,13 +48,14 @@
 
                 <!-- Progress Bar -->
                 <div class="mt-8 w-full bg-slate-700/50 rounded-full h-3 max-w-xl">
-                    <div class="bg-gradient-to-r from-indigo-500 to-emerald-400 h-3 rounded-full" style="width: {{ min(100, ($project->current_fund / $project->fund_goal) * 100) }}%"></div>
+                    <div class="bg-gradient-to-r from-indigo-500 to-emerald-400 h-3 rounded-full"
+                        style="width: {{ min(100, ($project->current_fund / $project->fund_goal) * 100) }}%"></div>
                 </div>
             </div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            
+
             <!-- Left Column: Details -->
             <div class="lg:col-span-2 space-y-8">
                 <!-- About -->
@@ -73,7 +80,8 @@
                         </div>
                         <div class="p-4 bg-slate-50 rounded-xl">
                             <p class="text-sm text-slate-500 mb-1">Min Investment</p>
-                            <p class="text-lg font-bold text-navy">₹{{ number_format($project->min_investment ?? 5000) }}</p>
+                            <p class="text-lg font-bold text-navy">
+                                ₹{{ number_format($project->min_investment ?? 5000) }}</p>
                         </div>
                         <div class="p-4 bg-slate-50 rounded-xl">
                             <p class="text-sm text-slate-500 mb-1">Risk Level</p>
@@ -85,59 +93,76 @@
 
             <!-- Right Column: Investment Action -->
             <div class="space-y-6">
-                
+
                 @if($project->status === 'active')
-                <div class="card p-6 border-2 border-indigo-600 ring-4 ring-indigo-50">
-                    <h3 class="text-xl font-bold text-navy mb-2">Invest Now</h3>
-                    <p class="text-sm text-slate-500 mb-6">Secure your stake in this project today.</p>
+                    <div class="card p-6 border-2 border-indigo-600 ring-4 ring-indigo-50">
+                        <h3 class="text-xl font-bold text-navy mb-2">Invest in This Project</h3>
+                        <p class="text-sm text-slate-500 mb-6">Enter your investment details to get started.</p>
 
-                    <form action="{{ route('subscriber.projects.invest', $project->id) }}" method="POST" class="space-y-4">
-                        @csrf
-                        
-                        <div>
-                            <label class="block text-sm font-semibold text-slate-700 mb-2">Investment Amount (₹)</label>
-                            <div class="relative">
-                                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-bold">₹</span>
-                                <input type="number" name="amount" min="{{ $project->min_investment ?? 1000 }}" 
-                                       class="input pl-8 w-full font-bold text-lg" 
-                                       placeholder="5000" required>
+                        <form method="POST" action="{{ route('subscriber.projects.invest', $project) }}">
+                            @csrf
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="amount" class="block text-sm font-semibold text-navy mb-1.5">Investment Amount (₹)</label>
+                                    <input type="number" name="amount" id="amount" 
+                                           min="{{ $project->min_investment ?? 1 }}" 
+                                           step="100"
+                                           required
+                                           class="w-full rounded-lg border-gray-300 focus:border-teal-500 focus:ring-teal-500 text-navy placeholder-slate-400">
+                                    <p class="text-xs text-slate-500 mt-1">Minimum investment: ₹{{ number_format($project->min_investment ?? 1) }}</p>
+                                </div>
+
+                                <div>
+                                    <label for="plan_id" class="block text-sm font-semibold text-navy mb-1.5">Investment Plan</label>
+                                    <select name="plan_id" id="plan_id" required
+                                            class="w-full rounded-lg border-gray-300 focus:border-teal-500 focus:ring-teal-500 text-navy">
+                                        @foreach(\App\Models\InvestmentPlan::where('is_active', true)->get() as $plan)
+                                            <option value="{{ $plan->id }}">{{ $plan->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-semibold text-navy mb-1.5">Payment Method</label>
+                                    <div class="space-y-2">
+                                        <label class="flex items-center gap-3 cursor-pointer">
+                                            <input type="radio" name="payment_method" value="wallet" 
+                                                   {{ auth()->user()->wallet_balance > 0 ? 'checked' : 'disabled' }}
+                                                   class="w-4 h-4 rounded border-gray-300 text-teal-600 focus:ring-teal-500">
+                                            <span class="text-sm font-medium text-navy">Wallet Balance</span>
+                                            <span class="text-xs text-slate-500">(₹{{ number_format(auth()->user()->wallet_balance, 2) }})</span>
+                                        </label>
+                                        <label class="flex items-center gap-3 cursor-pointer">
+                                            <input type="radio" name="payment_method" value="gateway" 
+                                                   {{ auth()->user()->wallet_balance <= 0 ? 'checked' : '' }}
+                                                   class="w-4 h-4 rounded border-gray-300 text-teal-600 focus:ring-teal-500">
+                                            <span class="text-sm font-medium text-navy">Online Payment</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <button type="submit" 
+                                        class="w-full py-3 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-lg transition">
+                                    Invest Now
+                                </button>
                             </div>
-                            <p class="text-xs text-slate-500 mt-1">Minimum: ₹{{ number_format($project->min_investment ?? 1000) }}</p>
-                        </div>
+                        </form>
 
-                        <div>
-                            <label class="block text-sm font-semibold text-slate-700 mb-2">Select Plan</label>
-                            <select name="plan_id" class="input w-full" required>
-                                <option value="">Select a Plan...</option>
-                                @foreach($plans as $plan)
-                                    <option value="{{ $plan->id }}">{{ $plan->name }} ({{ $plan->roi }}% ROI)</option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="bg-indigo-50 p-3 rounded-lg text-sm text-indigo-700">
-                            <div class="flex justify-between items-center mb-1">
-                                <span>Wallet Balance:</span>
-                                <span class="font-bold">₹{{ number_format(auth()->user()->wallet_balance ?? 0) }}</span>
-                            </div>
-                            @if((auth()->user()->wallet_balance ?? 0) < ($project->min_investment ?? 1000))
-                                <p class="text-xs text-red-500 mt-1">Insufficient funds. <a href="{{ route('subscriber.deposit.create') }}" class="underline font-bold">Add Money</a></p>
-                            @endif
-                        </div>
-
-                        <button type="submit" class="btn btn-navy w-full py-3 text-lg shadow-lg shadow-indigo-500/30">
-                            Confirm Investment
-                        </button>
-                    </form>
-                </div>
-                @else
-                <div class="card p-6 bg-slate-50 text-center">
-                    <div class="w-16 h-16 bg-slate-200 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <svg class="w-8 h-8 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                        <p class="text-xs text-slate-400 mt-6 text-center">
+                            By investing, you agree to our terms and conditions. Your investment will be processed securely.
+                        </p>
                     </div>
-                    <h3 class="text-lg font-bold text-slate-600">Investment Closed</h3>
-                    <p class="text-slate-500 text-sm mt-2">This project is not currently accepting new investments.</p>
-                </div>
+                @else
+                    <div class="card p-6 bg-slate-50 text-center">
+                        <div class="w-16 h-16 bg-slate-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-600">Investment Closed</h3>
+                        <p class="text-slate-500 text-sm mt-2">This project is not currently accepting new investments.</p>
+                    </div>
                 @endif
 
                 <!-- Documents -->
@@ -146,12 +171,18 @@
                     <ul class="space-y-3">
                         @forelse($project->documents ?? [] as $doc)
                             <li>
-                                <a href="{{ Storage::url($doc) }}" target="_blank" class="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 transition group">
-                                    <div class="w-10 h-10 rounded bg-red-50 flex items-center justify-center text-red-500 group-hover:bg-red-100 transition">
-                                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 2H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+                                <a href="{{ Storage::url($doc) }}" target="_blank"
+                                    class="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 transition group">
+                                    <div
+                                        class="w-10 h-10 rounded bg-red-50 flex items-center justify-center text-red-500 group-hover:bg-red-100 transition">
+                                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                        </svg>
                                     </div>
                                     <div class="flex-1 min-w-0">
-                                        <p class="text-sm font-medium text-slate-700 truncate">Document.pdf</p> <!-- Placeholder name -->
+                                        <p class="text-sm font-medium text-slate-700 truncate">Document.pdf</p>
+                                        <!-- Placeholder name -->
                                         <p class="text-xs text-slate-400">View File</p>
                                     </div>
                                 </a>

@@ -12,12 +12,18 @@ class ProjectInvestment extends Model
     protected $fillable = [
         'user_id',
         'project_id',
-        'subscription_id',
+        'investment_plan_id',
         'amount',
         'allocation_type',
         'admin_id',
         'status',
         'allocated_at',
+        'razorpay_order_id',
+        'razorpay_payment_id',
+        'stripe_payment_intent_id',
+        'roi_start_date',
+        'roi_end_date',
+        'total_roi_earned',
     ];
 
     protected $casts = [
@@ -25,9 +31,12 @@ class ProjectInvestment extends Model
         'allocated_at' => 'datetime',
     ];
 
+    const STATUS_PENDING_PAYMENT = 'pending_payment';
+    const STATUS_PENDING_ADMIN_ALLOCATION = 'pending_admin_allocation';
     const STATUS_ALLOCATED = 'allocated';
     const STATUS_ACTIVE = 'active';
     const STATUS_WITHDRAWN = 'withdrawn';
+    const STATUS_FAILED = 'failed';
 
     public function user()
     {
@@ -52,6 +61,11 @@ class ProjectInvestment extends Model
     public function profitLogs()
     {
         return $this->hasMany(UserProfitLog::class);
+    }
+
+    public function investmentPlan()
+    {
+        return $this->belongsTo(InvestmentPlan::class, 'investment_plan_id');
     }
 
     /**

@@ -41,7 +41,7 @@ Route::middleware('guest')->prefix('admin')->name('admin.')->group(function () {
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::post('logout', [AdminLoginController::class, 'destroy'])->name('logout');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    
+
     Route::resource('users', UserController::class);
     Route::post('users/{user}/activate', [UserController::class, 'activate'])->name('users.activate');
     Route::post('users/{user}/deactivate', [UserController::class, 'deactivate'])->name('users.deactivate');
@@ -65,8 +65,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('investments', [InvestmentController::class, 'index'])->name('investments.index');
     Route::post('investments/allocate', [InvestmentController::class, 'allocate'])->name('investments.allocate');
     Route::post('investments/auto-allocate', [InvestmentController::class, 'autoAllocate'])->name('investments.auto-allocate');
+    Route::post('investments/allocate-pending/{investment}', [InvestmentController::class, 'allocatePending'])->name('investments.allocate-pending');
     Route::post('investments/activate/{project}', [InvestmentController::class, 'activateProject'])->name('investments.activate');
-    
+
     Route::get('profits', [ProfitDistributionController::class, 'index'])->name('profits.index');
     Route::get('profits/create', [ProfitDistributionController::class, 'create'])->name('profits.create');
     Route::post('profits', [ProfitDistributionController::class, 'store'])->name('profits.store');
@@ -76,7 +77,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     // Payments & Invoices
     Route::get('payments', [PaymentController::class, 'index'])->name('payments.index');
     Route::get('payments/{payment}', [PaymentController::class, 'show'])->name('payments.show');
-    
+
     Route::get('invoices', [InvoiceController::class, 'index'])->name('invoices.index');
     Route::get('invoices/{invoice}', [InvoiceController::class, 'show'])->name('invoices.show');
     Route::get('invoices/{invoice}/download', [InvoiceController::class, 'download'])->name('invoices.download');

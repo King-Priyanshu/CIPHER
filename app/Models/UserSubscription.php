@@ -11,11 +11,13 @@ class UserSubscription extends Model
 
     protected $fillable = [
         'user_id',
+        'project_id',
         'plan_id',
         'amount',
         'allocated_amount',
         'subscription_plan_id', // Alias for compatibility
         'stripe_subscription_id',
+        'stripe_payment_intent_id',
         'razorpay_subscription_id',
         'razorpay_order_id',
         'razorpay_customer_id',
@@ -59,6 +61,11 @@ class UserSubscription extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function project()
+    {
+        return $this->belongsTo(Project::class);
     }
 
     public function plan()

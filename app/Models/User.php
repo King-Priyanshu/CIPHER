@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\Wallet;
+use App\Models\WalletTransaction;
 
 class User extends Authenticatable
 {
@@ -25,6 +27,7 @@ class User extends Authenticatable
         'status',
         'terms_accepted_at',
         'razorpay_customer_id',
+        'stripe_customer_id',
         'phone',
         'participation_mode',
         'referral_code',
@@ -32,6 +35,10 @@ class User extends Authenticatable
         'payment_reminders_enabled',
         'payment_reminder_method',
         'payment_reminder_days',
+        'two_factor_enabled',
+        'two_factor_method',
+        'two_factor_secret',
+        'two_factor_recovery_codes',
     ];
 
     /**
@@ -158,7 +165,7 @@ class User extends Authenticatable
     {
         return $this->hasMany(User::class, 'referred_by');
     }
-    
+
     /**
      * Boot method to auto-generate referral code.
      */
@@ -190,8 +197,8 @@ class User extends Authenticatable
             return false;
         }
 
-        return $subscription->status === 'active' && 
-               ($subscription->ends_at === null || $subscription->ends_at->isFuture());
+        return $subscription->status === 'active' &&
+            ($subscription->ends_at === null || $subscription->ends_at->isFuture());
     }
 
     /**
@@ -224,5 +231,13 @@ class User extends Authenticatable
     public function getWalletBalanceAttribute(): float
     {
         return (float) ($this->wallet?->balance ?? 0.0);
+    }
+
+    /**
+     * Get all wallet transactions for the user.
+     */
+    public function walletTransactions()
+    {
+        return $this->hasManyThrough(WalletTransaction::class, Wallet::class);
     }
 }

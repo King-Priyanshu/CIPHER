@@ -8,9 +8,11 @@ use App\Models\ProjectInvestment;
 use App\Models\User;
 use App\Services\InvestmentAllocationService;
 use App\Services\AutoAllocationService;
-use App\Models\UserSubscription; // Added for pooled funds calculation
+use App\Models\InvestmentPlan;
+use App\Models\UserSubscription;
 use App\Services\ActivityLogger;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class InvestmentController extends Controller
 {
@@ -52,7 +54,7 @@ class InvestmentController extends Controller
         $investments = $query->paginate(20);
         $projects = Project::orderBy('title')->get();
         // Filter Dropdown: Only users with Active/Trialing subscriptions
-        $users = User::whereHas('subscriptions', function($q) {
+        $users = User::whereHas('subscriptions', function ($q) {
             $q->whereIn('status', ['active', 'trialing']);
         })->orderBy('name')->get();
 
@@ -61,7 +63,7 @@ class InvestmentController extends Controller
             'total_invested' => ProjectInvestment::active()->sum('amount'),
             'total_investors' => ProjectInvestment::active()->distinct('user_id')->count(),
             'active_investments' => ProjectInvestment::active()->count(),
-            'pooled_funds' => \App\Models\UserSubscription::active()->get()->sum(function($sub) {
+            'pooled_funds' => \App\Models\UserSubscription::active()->get()->sum(function ($sub) {
                 return $sub->amount - $sub->allocated_amount;
             }),
         ];
@@ -157,12 +159,15 @@ class InvestmentController extends Controller
             } else {
                 // Bulk allocation logic
                 $count = 0;
-                $users = User::whereHas('roles', function($q) { $q->where('slug', 'subscriber'); })
-                             ->where('status', 'active')
-                             ->where('participation_mode', 'auto')
-                             ->get();
-                             
+                $users = User::whereHas('roles', function ($q) {
+                    $q->where('slug', 'subscriber');
+                })
+                    ->where('status', 'active')
+                    ->where('participation_mode', 'auto')
+                    ->get();
+
                 foreach ($users as $user) {
+                    /** @var User $user */
                     try {
                         $investments = $this->autoAllocationService->allocateForUser($user, null, auth()->id());
                         $count += count($investments);
@@ -174,6 +179,46 @@ class InvestmentController extends Controller
             }
 
             return redirect()->back()->with('success', $msg);
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Allocation failed: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Allocate a pending automatic investment to a project.
+     */
+    public function allocatePending(Request $request, ProjectInvestment $investment)
+    {
+        if ($investment->status !== ProjectInvestment::STATUS_PENDING_ADMIN_ALLOCATION) {
+            return redirect()->back()->with('error', 'Investment is not in a pending allocation state.');
+        }
+
+        $request->validate([
+            'project_id' => 'required|exists:projects,id',
+        ]);
+
+        $project = Project::findOrFail($request->project_id);
+
+        try {
+            DB::transaction(function () use ($investment, $project) {
+                $investment->update([
+                    'project_id' => $project->id,
+                    'status' => ProjectInvestment::STATUS_ACTIVE,
+                    'allocated_at' => now(),
+                    'admin_id' => auth()->id(),
+                    'roi_start_date' => now()->addDays(1),
+                    'roi_end_date' => now()->addMonths($investment->investmentPlan->duration_months ?? 12),
+                ]);
+
+                // Update project funding
+                $project->increment('current_fund', (float) $investment->amount);
+            });
+
+            $this->logger->logFinancial('investment.admin_allocate', "Admin allocated Project #{$project->id} to Investment #{$investment->id}", $investment);
+
+            return redirect()->route('admin.investments.index')
+                ->with('success', "Investment allocated to project {$project->title} successfully.");
+
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Allocation failed: ' . $e->getMessage());
         }

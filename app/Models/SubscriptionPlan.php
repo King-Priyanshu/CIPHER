@@ -19,6 +19,8 @@ class SubscriptionPlan extends Model
         'trial_days',
         'is_active',
         'razorpay_plan_id',
+        'stripe_product_id',
+        'stripe_price_id',
     ];
 
     protected $casts = [

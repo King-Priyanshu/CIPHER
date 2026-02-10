@@ -44,6 +44,7 @@ class ExpireGracePeriods extends Command
         $this->info("Found {$expiredSubscriptions->count()} subscription(s) to expire.");
 
         foreach ($expiredSubscriptions as $subscription) {
+            /** @var UserSubscription $subscription */
             $subscription->update([
                 'status' => 'expired',
                 'grace_until' => null,
@@ -65,7 +66,8 @@ class ExpireGracePeriods extends Command
 
             $this->line("Expired subscription #{$subscription->id} for user #{$subscription->user_id}");
 
-            // TODO: Send expiration notification to user
+            // Send expiration notification to user
+            $subscription->user->notify(new \App\Notifications\SubscriptionExpired($subscription));
         }
 
         $this->info("Expired {$expiredSubscriptions->count()} subscription(s).");

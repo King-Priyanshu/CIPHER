@@ -17,7 +17,7 @@ class MockPaymentService
      * @param string $forceStatus 'success', 'failed', 'pending', 'random'
      * @return array
      */
-    public function processPayment(User $user, int $amount, string $currency = 'INR', array $options = [], string $forceStatus): array
+    public function processPayment(int $userId, int $subscriptionPlanId, int $amount, string $currency = 'INR', array $options = [], string $forceStatus): array
     {
         $status = $this->determineStatus($forceStatus);
         $transactionId = 'TEST_' . strtoupper(uniqid());

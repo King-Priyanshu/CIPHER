@@ -13,8 +13,6 @@ class InvestmentPlanController extends Controller
     /**
      * Display a listing of investment plans.
      */
-     * Display a listing of investment plans.
-     */
     public function index()
     {
         $plans = InvestmentPlan::with('project')->latest()->paginate(10);

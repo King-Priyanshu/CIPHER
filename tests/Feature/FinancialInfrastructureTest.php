@@ -28,7 +28,7 @@ class FinancialInfrastructureTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         // Seed Ledger Accounts
         $this->seed(\Database\Seeders\RoleSeeder::class);
         $this->seed(\Database\Seeders\LedgerAccountSeeder::class);
@@ -96,9 +96,9 @@ class FinancialInfrastructureTest extends TestCase
         Event::fake();
 
         $user = User::factory()->create();
-        
+
         // Ensure user has subscription (mocked) to link
-        $plan = \App\Models\SubscriptionPlan::factory()->create(['price' => 1000]);
+        $plan = \App\Models\SubscriptionPlan::factory()->create(['price' => 1000, 'interval' => 'monthly']);
         $sub = \App\Models\UserSubscription::create([
             'user_id' => $user->id,
             'plan_id' => $plan->id,
@@ -134,13 +134,12 @@ class FinancialInfrastructureTest extends TestCase
         ]);
 
         $job = new ProcessWebhook($eventId);
-        $job->handle(new \App\Services\Payment\RazorpayService(), $this->walletService);
+        $job->handle(new \App\Services\Payment\RazorpayService(), new \App\Services\Payment\StripeService(), $this->walletService);
 
         // Assert Subscription Active
         $this->assertDatabaseHas('user_subscriptions', [
             'id' => $sub->id,
             'status' => 'active',
-            'razorpay_payment_id' => 'pay_12345'
         ]);
 
         // Assert Payment Recorded

@@ -9,14 +9,21 @@ use App\Models\SubscriptionPlan;
 
 class SubscriptionController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
         // Ignore pending subscriptions (stale checkouts) so user can retry
         $subscription = $user->subscriptions()->active()->latest()->first();
-        $plans = SubscriptionPlan::where('is_active', true)->get();
 
-        return view('subscriber.subscription.index', compact('subscription', 'plans'));
+        // Get all available plans
+        $availablePlans = SubscriptionPlan::where('is_active', true)->orderBy('price')->get();
+
+        $project = null;
+        if ($request->has('project_id')) {
+            $project = \App\Models\Project::find($request->project_id);
+        }
+
+        return view('subscriber.subscription.index', compact('subscription', 'project', 'availablePlans'));
     }
 
     /**
@@ -64,7 +71,7 @@ class SubscriptionController extends Controller
             'entity_id' => $subscription->id,
         ]);
 
-        $message = $isUpgrade 
+        $message = $isUpgrade
             ? "Upgraded to {$newPlan->name}! Your new rate is ₹{$newPlan->price}/month."
             : "Downgraded to {$newPlan->name}. Your new rate is ₹{$newPlan->price}/month.";
 

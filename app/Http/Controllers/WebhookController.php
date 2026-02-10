@@ -133,7 +133,7 @@ class WebhookController extends Controller
 
         if ($user) {
             $subscription = $user->subscription;
-            
+
             if ($subscription) {
                 $retryCount = ($subscription->retry_count ?? 0) + 1;
                 $maxRetries = 3;
@@ -152,11 +152,12 @@ class WebhookController extends Controller
                         'retry_count' => $retryCount,
                     ]);
 
-                    // TODO: Send subscription suspended notification
+                    // Send subscription suspended notification
+                    $user->notify(new \App\Notifications\SubscriptionSuspended($subscription));
                 } else {
                     // Set or maintain grace period
                     $graceUntil = $subscription->grace_until ?? now()->addDays($gracePeriodDays);
-                    
+
                     $subscription->update([
                         'status' => 'past_due',
                         'retry_count' => $retryCount,
@@ -169,7 +170,8 @@ class WebhookController extends Controller
                         'grace_until' => $graceUntil->toDateString(),
                     ]);
 
-                    // TODO: Send payment failed notification with retry count
+                    // Send payment failed notification with retry count
+                    $user->notify(new \App\Notifications\PaymentFailedNotification($subscription, $retryCount));
                 }
             }
         }
@@ -187,8 +189,8 @@ class WebhookController extends Controller
         if ($subscription) {
             $subscription->update([
                 'status' => $this->mapStripeStatus($stripeSubscription->status),
-                'ends_at' => $stripeSubscription->current_period_end 
-                    ? now()->setTimestamp($stripeSubscription->current_period_end) 
+                'ends_at' => $stripeSubscription->current_period_end
+                    ? now()->setTimestamp($stripeSubscription->current_period_end)
                     : null,
             ]);
         }
