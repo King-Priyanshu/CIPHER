@@ -12,9 +12,12 @@ class UserSubscription extends Model
     protected $fillable = [
         'user_id',
         'plan_id',
+        'amount',
+        'allocated_amount',
         'subscription_plan_id', // Alias for compatibility
         'stripe_subscription_id',
         'razorpay_subscription_id',
+        'razorpay_order_id',
         'razorpay_customer_id',
         'status',
         'starts_at',
@@ -26,11 +29,13 @@ class UserSubscription extends Model
         'current_period_end',
         'cancel_reason',
         'cancel_at_period_end',
+        'maturity_date',
     ];
 
     protected $casts = [
         'starts_at' => 'datetime',
         'ends_at' => 'datetime',
+        'maturity_date' => 'datetime',
         'cancelled_at' => 'datetime',
         'grace_until' => 'datetime',
         'current_period_start' => 'datetime',
@@ -43,6 +48,14 @@ class UserSubscription extends Model
      * Subscription States: pending, active, past_due, cancelled, expired, suspended
      */
 
+    /**
+     * Scope: Only active / trialing subscriptions
+     */
+    public function scopeActive($query)
+    {
+        return $query->whereIn('status', ['active', 'trialing']);
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -51,6 +64,14 @@ class UserSubscription extends Model
     public function plan()
     {
         return $this->belongsTo(SubscriptionPlan::class, 'plan_id');
+    }
+
+    /**
+     * Get all investments made from this subscription.
+     */
+    public function investments()
+    {
+        return $this->hasMany(ProjectInvestment::class, 'subscription_id');
     }
 
     /**

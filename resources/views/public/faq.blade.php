@@ -43,7 +43,7 @@
                             </svg>
                         </button>
                         <div x-show="openFaq === 2" x-collapse class="px-6 pb-5 text-slate-600 leading-relaxed">
-                            We offer three subscription tiers: Seed ($29/mo), Growth ($79/mo), and Visionary ($199/mo). Your subscription fee goes into our community fund pools, which are then allocated to vetted projects. Higher tiers receive priority rewards and additional voting rights on project selection.
+                            We offer three subscription tiers: Seed (₹29/mo), Growth (₹79/mo), and Visionary (₹199/mo). Your subscription fee goes into our community fund pools, which are then allocated to vetted projects. Higher tiers receive priority rewards and additional voting rights on project selection.
                         </div>
                     </div>
 

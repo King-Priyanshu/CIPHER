@@ -19,7 +19,8 @@ class RegisteredUserController extends Controller
      */
     public function create()
     {
-        return view('auth.register');
+        $referralCode = session('referral_code');
+        return view('auth.register', compact('referralCode'));
     }
 
     /**
@@ -32,22 +33,60 @@ class RegisteredUserController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'terms' => ['required', 'accepted'], // Mandatory as per wireframe
+            'referral_code' => ['required', 'string', 'exists:users,referral_code'],
         ]);
 
-        $subscriberRole = Role::where('slug', 'subscriber')->first();
+        // Auto-create subscriber role if missing (to avoid manual seeding requirement)
+        $subscriberRole = Role::firstOrCreate(
+            ['slug' => 'subscriber'],
+            [
+                'name' => 'Subscriber',
+                'description' => 'Standard user with subscription capabilities'
+            ]
+        );
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role_id' => $subscriberRole ? $subscriberRole->id : 1, // Fallback/Error handling in real app
-            'terms_accepted_at' => Carbon::now(),
-        ]);
+        if (!$subscriberRole) {
+            \Illuminate\Support\Facades\Log::error('Registration failed: Could not create Subscriber role.');
+            return back()->withErrors(['email' => 'System error: Could not initialize user role.'])->withInput();
+        }
+        
+        // Find referrer if referral code provided
+        // Find referrer via Service
+        $referrerId = null;
+        if ($request->referral_code) {
+           // We can rely on service logic if we want, or keep specific validation here.
+           // Since validation 'exists:users,referral_code' already passed, user exists.
+           // We just need to check role.
+           
+           $referrer = User::where('referral_code', $request->referral_code)->first();
+           if ($referrer && ($referrer->hasRole('admin') || $referrer->hasRole('manager'))) {
+               $referrerId = $referrer->id;
+           } else {
+               return back()->withErrors(['referral_code' => 'Invalid referral code or referrer not authorized.'])->withInput();
+           }
+        }
 
-        event(new Registered($user));
+        try {
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'role_id' => $subscriberRole->id,
+                'terms_accepted_at' => Carbon::now(),
+                'referred_by' => $referredBy,
+            ]);
 
-        Auth::login($user);
+            \Illuminate\Support\Facades\Log::info('User created successfully: ' . $user->id);
 
-        return redirect(route('subscriber.dashboard'));
+            event(new Registered($user));
+
+            Auth::login($user);
+
+            return redirect(route('subscriber.dashboard'));
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Registration Error: ' . $e->getMessage());
+            \Illuminate\Support\Facades\Log::error($e->getTraceAsString());
+            return back()->withErrors(['email' => 'Registration failed: ' . $e->getMessage()])->withInput();
+        }
     }
 }

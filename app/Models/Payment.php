@@ -9,9 +9,12 @@ class Payment extends Model
 {
     use HasFactory;
 
+    use HasFactory;
+
     protected $fillable = [
         'user_id',
         'subscription_id',
+        'razorpay_order_id',
         'gateway',
         'gateway_transaction_id',
         'amount',

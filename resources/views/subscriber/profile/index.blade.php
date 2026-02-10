@@ -30,12 +30,138 @@
                     @error('email') <p class="text-red-500 text-xs mt-1 font-medium">{{ $message }}</p> @enderror
                 </div>
 
+                <!-- Participation Mode -->
+                <div>
+                    <label class="block text-sm font-semibold text-navy mb-3">Participation Mode</label>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <label class="cursor-pointer relative">
+                            <input type="radio" name="participation_mode" value="auto" {{ old('participation_mode', $user->participation_mode) === 'auto' ? 'checked' : '' }} class="peer sr-only">
+                            <div class="p-4 rounded-xl border-2 border-gray-200 peer-checked:border-teal-500 peer-checked:bg-teal-50 transition hover:border-teal-200">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <div class="w-4 h-4 rounded-full border border-gray-300 peer-checked:border-teal-500 peer-checked:bg-teal-500 flex items-center justify-center">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-white opacity-0 peer-checked:opacity-100"></div>
+                                    </div>
+                                    <span class="font-bold text-navy">Auto Mode</span>
+                                </div>
+                                <p class="text-xs text-slate-500 ml-6">Funds are automatically allocated to active projects.</p>
+                            </div>
+                        </label>
+
+                        <label class="cursor-pointer relative">
+                            <input type="radio" name="participation_mode" value="manual" {{ old('participation_mode', $user->participation_mode) === 'manual' ? 'checked' : '' }} class="peer sr-only">
+                            <div class="p-4 rounded-xl border-2 border-gray-200 peer-checked:border-indigo-500 peer-checked:bg-indigo-50 transition hover:border-indigo-200">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <div class="w-4 h-4 rounded-full border border-gray-300 peer-checked:border-indigo-500 peer-checked:bg-indigo-500 flex items-center justify-center">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-white opacity-0 peer-checked:opacity-100"></div>
+                                    </div>
+                                    <span class="font-bold text-navy">Manual Mode</span>
+                                </div>
+                                <p class="text-xs text-slate-500 ml-6">You actively choose which projects to support.</p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
                 <div class="flex items-center gap-4 pt-2">
                     <button type="submit" class="px-4 py-2 bg-navy hover:bg-slate-800 text-white text-sm font-bold rounded-lg transition shadow-sm">
                         Save Changes
                     </button>
                     @if (session('status') === 'profile-updated')
                         <p class="text-sm text-emerald-600 font-medium">Saved successfully.</p>
+                    @endif
+                </div>
+            </form>
+        </div>
+
+        <!-- Payment Reminder Settings -->
+        <div class="card p-6 md:p-8" role="region" aria-label="Payment Reminder Settings">
+            <div class="mb-6">
+                <h3 class="text-lg font-bold text-navy">Payment Reminder Settings</h3>
+                <p class="text-sm text-slate-500 mt-1">Configure how you want to receive payment reminders.</p>
+            </div>
+
+            <form method="post" action="{{ route('subscriber.profile.update') }}" class="space-y-6 max-w-xl">
+                @csrf
+                @method('patch')
+
+                <div class="flex items-center gap-3">
+                    <input type="hidden" name="name" value="{{ $user->name }}">
+                    <input type="hidden" name="email" value="{{ $user->email }}">
+                    <input type="hidden" name="participation_mode" value="{{ $user->participation_mode }}">
+                    
+                    <input 
+                        type="checkbox" 
+                        name="payment_reminders_enabled" 
+                        id="payment_reminders_enabled"
+                        {{ old('payment_reminders_enabled', $user->payment_reminders_enabled ?? true) ? 'checked' : '' }}
+                        class="w-5 h-5 rounded border-gray-300 text-teal-600 focus:ring-teal-500"
+                        aria-label="Enable Payment Reminders"
+                    >
+                    <label for="payment_reminders_enabled" class="text-sm font-semibold text-navy cursor-pointer">
+                        Enable Payment Reminders
+                    </label>
+                </div>
+
+                <div id="reminder-methods" class="{{ old('payment_reminders_enabled', $user->payment_reminders_enabled ?? true) ? '' : 'opacity-50 pointer-events-none' }}">
+                    <div>
+                        <label for="payment_reminder_method" class="block text-sm font-semibold text-navy mb-1.5">Reminder Method</label>
+                        <select 
+                            name="payment_reminder_method" 
+                            id="payment_reminder_method"
+                            class="w-full rounded-lg border-gray-300 focus:border-teal-500 focus:ring-teal-500 text-navy"
+                        >
+                            <option value="email" {{ old('payment_reminder_method', $user->payment_reminder_method ?? 'email') === 'email' ? 'selected' : '' }}>
+                                Email
+                            </option>
+                            <option value="sms" {{ old('payment_reminder_method', $user->payment_reminder_method ?? 'email') === 'sms' ? 'selected' : '' }}>
+                                SMS
+                            </option>
+                            <option value="both" {{ old('payment_reminder_method', $user->payment_reminder_method ?? 'email') === 'both' ? 'selected' : '' }}>
+                                Email and SMS
+                            </option>
+                        </select>
+                        @error('payment_reminder_method') <p class="text-red-500 text-xs mt-1 font-medium">{{ $message }}</p> @enderror
+                    </div>
+
+                    <div>
+                        <label for="payment_reminder_days" class="block text-sm font-semibold text-navy mb-1.5">Reminder Days</label>
+                        <select 
+                            name="payment_reminder_days" 
+                            id="payment_reminder_days"
+                            class="w-full rounded-lg border-gray-300 focus:border-teal-500 focus:ring-teal-500 text-navy"
+                        >
+                            <option value="1" {{ old('payment_reminder_days', $user->payment_reminder_days ?? 3) === 1 ? 'selected' : '' }}>
+                                1 day before
+                            </option>
+                            <option value="2" {{ old('payment_reminder_days', $user->payment_reminder_days ?? 3) === 2 ? 'selected' : '' }}>
+                                2 days before
+                            </option>
+                            <option value="3" {{ old('payment_reminder_days', $user->payment_reminder_days ?? 3) === 3 ? 'selected' : '' }}>
+                                3 days before
+                            </option>
+                            <option value="5" {{ old('payment_reminder_days', $user->payment_reminder_days ?? 3) === 5 ? 'selected' : '' }}>
+                                5 days before
+                            </option>
+                            <option value="7" {{ old('payment_reminder_days', $user->payment_reminder_days ?? 3) === 7 ? 'selected' : '' }}>
+                                7 days before
+                            </option>
+                            <option value="10" {{ old('payment_reminder_days', $user->payment_reminder_days ?? 3) === 10 ? 'selected' : '' }}>
+                                10 days before
+                            </option>
+                            <option value="14" {{ old('payment_reminder_days', $user->payment_reminder_days ?? 3) === 14 ? 'selected' : '' }}>
+                                14 days before
+                            </option>
+                        </select>
+                        @error('payment_reminder_days') <p class="text-red-500 text-xs mt-1 font-medium">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-4 pt-2">
+                    <button type="submit" class="px-4 py-2 bg-navy hover:bg-slate-800 text-white text-sm font-bold rounded-lg transition shadow-sm">
+                        Save Settings
+                    </button>
+                    @if (session('status') === 'profile-updated')
+                        <p class="text-sm text-emerald-600 font-medium">Settings saved.</p>
                     @endif
                 </div>
             </form>
@@ -83,4 +209,20 @@
             </form>
         </div>
     </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const remindersEnabled = document.getElementById('payment_reminders_enabled');
+                const reminderMethods = document.getElementById('reminder-methods');
+                
+                if (remindersEnabled && reminderMethods) {
+                    remindersEnabled.addEventListener('change', function() {
+                        if (this.checked) {
+                            reminderMethods.classList.remove('opacity-50', 'pointer-events-none');
+                        } else {
+                            reminderMethods.classList.add('opacity-50', 'pointer-events-none');
+                        }
+                    });
+                }
+            });
+        </script>
 </x-layouts.subscriber>

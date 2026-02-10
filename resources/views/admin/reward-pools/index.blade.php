@@ -33,8 +33,8 @@
                     @forelse($pools as $pool)
                     <tr>
                         <td class="font-medium text-navy">{{ $pool->project->title ?? 'N/A' }}</td>
-                        <td class="font-numbers text-teal font-semibold">${{ number_format($pool->total_amount, 2) }}</td>
-                        <td class="font-numbers text-slate">${{ number_format($pool->distributed_amount, 2) }}</td>
+                        <td class="font-numbers text-teal font-semibold">₹{{ number_format($pool->total_amount, 2) }}</td>
+                        <td class="font-numbers text-slate">₹{{ number_format($pool->distributed_amount, 2) }}</td>
                         <td>
                             @if($pool->status == 'distributed')
                                 <span class="badge-success">Distributed</span>

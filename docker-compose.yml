@@ -1,6 +1,6 @@
 services:
     app:
-        image: serversideup/php:8.2-fpm-nginx
+        image: serversideup/php:8.4-fpm-nginx
         ports:
             - '${APP_PORT:-8000}:8080'
             - '${VITE_PORT:-5173}:5173'

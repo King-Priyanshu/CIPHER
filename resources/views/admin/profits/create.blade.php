@@ -8,7 +8,7 @@
                 <p class="text-sm text-slate-500 mt-1">Declare project profit for distribution to investors.</p>
             </div>
             <div class="p-6">
-                <form action="{{ route('admin.profits.store') }}" method="POST">
+                <form action="{{ route('admin.profits.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
 
                     <div class="mb-6">
@@ -31,6 +31,24 @@
                                class="w-full rounded-lg border-gray-300 focus:border-teal-500 focus:ring-teal-500"
                                placeholder="10000.00">
                         @error('amount')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div class="mb-6">
+                        <label for="month" class="block text-sm font-semibold text-navy mb-2">Month</label>
+                        <input type="date" name="month" id="month" required
+                               class="w-full rounded-lg border-gray-300 focus:border-teal-500 focus:ring-teal-500">
+                        @error('month')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div class="mb-6">
+                        <label for="supporting_documents" class="block text-sm font-semibold text-navy mb-2">Supporting Documents</label>
+                        <input type="file" name="supporting_documents" id="supporting_documents"
+                               class="w-full rounded-lg border-gray-300 focus:border-teal-500 focus:ring-teal-500">
+                        @error('supporting_documents')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
                     </div>

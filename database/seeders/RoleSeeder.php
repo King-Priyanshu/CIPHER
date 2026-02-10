@@ -20,6 +20,11 @@ class RoleSeeder extends Seeder
                 'slug' => 'subscriber',
                 'description' => 'Standard user with subscription capabilities',
             ],
+            [
+                'name' => 'Manager',
+                'slug' => 'manager',
+                'description' => 'Can generate referral links and monitor projects',
+            ],
         ];
 
         foreach ($roles as $role) {

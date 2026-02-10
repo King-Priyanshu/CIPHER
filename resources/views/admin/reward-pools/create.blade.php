@@ -27,7 +27,7 @@
                     </div>
 
                     <div>
-                        <label for="total_amount" class="block text-sm font-medium text-navy mb-1.5">Total Reward Amount ($)</label>
+                        <label for="total_amount" class="block text-sm font-medium text-navy mb-1.5">Total Reward Amount (₹)</label>
                         <input type="number" name="total_amount" id="total_amount" value="{{ old('total_amount') }}" step="0.01" min="0" required
                             class="input-field font-numbers" placeholder="0.00">
                         @error('total_amount')

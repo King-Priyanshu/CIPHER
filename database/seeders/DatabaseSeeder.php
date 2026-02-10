@@ -14,8 +14,13 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RoleSeeder::class,
             AdminUserSeeder::class,
-            UserSeeder::class,
+            LedgerAccountSeeder::class,
             SubscriptionPlanSeeder::class,
+            ProjectSeeder::class,
+            UserSeeder::class,
+            ContentPageSeeder::class,
+            // Add other seeders as needed for full test coverage
+            // DummyDataSeeder::class can be used for bulk test data
         ]);
     }
 }

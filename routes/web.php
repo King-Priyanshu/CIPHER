@@ -3,22 +3,19 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Public\HomeController;
 use App\Http\Controllers\Public\PublicPageController;
-use App\Http\Controllers\Subscriber\DashboardController as SubscriberDashboard;
-use App\Http\Controllers\Subscriber\ProjectController as SubscriberProjects;
+use App\Http\Controllers\Public\ProjectController as PublicProjects;
+use App\Http\Controllers\Subscriber\DashboardController;
+use App\Http\Controllers\Subscriber\ProjectController;
 use App\Http\Controllers\Subscriber\RewardController as SubscriberRewards;
 use App\Http\Controllers\Subscriber\InvestmentController as SubscriberInvestments;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\RazorpayWebhookController;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-*/
-
 // Public Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/faq', function () { return view('public.faq'); })->name('faq');
+Route::get('/projects', [PublicProjects::class, 'index'])->name('projects.index');
+Route::get('/projects/{project}', [PublicProjects::class, 'show'])->name('projects.show');
 Route::get('/page/{slug}', [PublicPageController::class, 'show'])->name('page.show');
 
 // Webhook Routes (CSRF exempt)
@@ -31,21 +28,29 @@ Route::post('/webhooks/razorpay', [RazorpayWebhookController::class, 'handle'])
     ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
 
 require __DIR__.'/auth.php';
-require __DIR__.'/admin.php';
+// admin.php is loaded in bootstrap/app.php
 
 // Subscriber Routes
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/dashboard', [SubscriberDashboard::class, 'index'])->name('subscriber.dashboard');
-    Route::get('/projects', [SubscriberProjects::class, 'index'])->name('subscriber.projects.index');
+Route::middleware(['auth', 'verified'])->prefix('app')->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('subscriber.dashboard');
+    Route::get('/projects', [ProjectController::class, 'index'])->name('subscriber.projects.index');
+    Route::get('/projects/{project}', [ProjectController::class, 'show'])->name('subscriber.projects.show');
+    Route::post('/projects/{project}/invest', [ProjectController::class, 'invest'])->name('subscriber.projects.invest');
     Route::get('/rewards', [SubscriberRewards::class, 'index'])->name('subscriber.rewards.index');
+    Route::get('/referrals', [App\Http\Controllers\Subscriber\ReferralController::class, 'index'])->name('subscriber.referrals.index');
     
     // Investments & Profits
     Route::get('/investments', [SubscriberInvestments::class, 'index'])->name('subscriber.investments.index');
     Route::get('/profits', [SubscriberInvestments::class, 'profits'])->name('subscriber.profits.index');
+    Route::post('/profits/redeem', [App\Http\Controllers\Subscriber\RedemptionController::class, 'store'])->name('subscriber.profits.redeem');
+    Route::get('/invoices/{invoice}/download', [App\Http\Controllers\Subscriber\InvoiceController::class, 'download'])->name('subscriber.invoices.download');
     
     // Billing & Subscription
     Route::get('/billing', [App\Http\Controllers\Subscriber\BillingController::class, 'index'])->name('subscriber.billing.index');
+    Route::get('/payments', [App\Http\Controllers\Subscriber\PaymentHistoryController::class, 'index'])->name('subscriber.payments.index');
     Route::get('/subscription', [App\Http\Controllers\Subscriber\SubscriptionController::class, 'index'])->name('subscriber.subscription.index');
+    Route::post('/subscription/change-plan', [App\Http\Controllers\Subscriber\SubscriptionController::class, 'changePlan'])->name('subscriber.subscription.change-plan');
+    Route::get('/card', [App\Http\Controllers\Subscriber\MembershipCardController::class, 'show'])->name('subscriber.card.show');
     
     // Profile & Notifications
     Route::get('/notifications', [App\Http\Controllers\Subscriber\NotificationsController::class, 'index'])->name('subscriber.notifications.index');
@@ -56,6 +61,35 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Checkout Routes
     Route::get('/checkout/{plan}', [CheckoutController::class, 'show'])->name('checkout.show');
     Route::post('/checkout/{plan}/create', [CheckoutController::class, 'createSubscription'])->name('checkout.create');
-    Route::get('/checkout/success', [CheckoutController::class, 'success'])->name('checkout.success');
+    Route::any('/payment/callback', [CheckoutController::class, 'success'])->name('checkout.success');
     Route::post('/checkout/status', [CheckoutController::class, 'checkStatus'])->name('checkout.status');
+
+    // SIP Routes
+    Route::get('/sip', [App\Http\Controllers\Subscriber\SipController::class, 'index'])->name('subscriber.sip.index');
+    Route::get('/sip/create', [App\Http\Controllers\Subscriber\SipController::class, 'create'])->name('subscriber.sip.create');
+    Route::post('/sip', [App\Http\Controllers\Subscriber\SipController::class, 'store'])->name('subscriber.sip.store');
+    Route::get('/sip/{id}', [App\Http\Controllers\Subscriber\SipController::class, 'show'])->name('subscriber.sip.show');
+    Route::get('/sip/{id}/edit', [App\Http\Controllers\Subscriber\SipController::class, 'edit'])->name('subscriber.sip.edit');
+    Route::put('/sip/{id}', [App\Http\Controllers\Subscriber\SipController::class, 'update'])->name('subscriber.sip.update');
+    Route::post('/sip/{id}/cancel', [App\Http\Controllers\Subscriber\SipController::class, 'cancel'])->name('subscriber.sip.cancel');
+    Route::get('/sip/{id}/payment-schedule', [App\Http\Controllers\Subscriber\SipController::class, 'paymentSchedule'])->name('subscriber.sip.payment-schedule');
+
+    // ROI Simulator
+    Route::get('/roi-simulator', function () {
+        return view('subscriber.roi-simulator');
+    })->name('subscriber.roi-simulator');
+
+    // Refund Routes
+    Route::get('/refunds', [App\Http\Controllers\Subscriber\RefundController::class, 'index'])->name('subscriber.refunds.index');
+    Route::get('/refunds/create', [App\Http\Controllers\Subscriber\RefundController::class, 'create'])->name('subscriber.refunds.create');
+    Route::post('/refunds', [App\Http\Controllers\Subscriber\RefundController::class, 'store'])->name('subscriber.refunds.store');
+    Route::get('/refunds/{id}', [App\Http\Controllers\Subscriber\RefundController::class, 'show'])->name('subscriber.refunds.show');
+
+});
+
+// DEV: Reset Razorpay Mappings (Temporary)
+Route::get('/dev/reset-razorpay', function () {
+    \App\Models\SubscriptionPlan::query()->update(['razorpay_plan_id' => null]);
+    \App\Models\User::query()->update(['razorpay_customer_id' => null]);
+    return 'Razorpay Plan IDs and Customer IDs cleared. Next checkout will regenerate them.';
 });

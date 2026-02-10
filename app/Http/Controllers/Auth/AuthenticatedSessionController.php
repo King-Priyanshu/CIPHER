@@ -43,7 +43,14 @@ class AuthenticatedSessionController extends Controller
         }
 
         // Default redirect for subscribers and other users
-        return redirect()->intended(route('subscriber.dashboard'));
+        $redirect = redirect()->intended(route('subscriber.dashboard'));
+        
+        // Check if the intended destination is admin panel (prevent loop)
+        if (str_contains($redirect->getTargetUrl(), '/admin')) {
+             return redirect()->route('subscriber.dashboard');
+        }
+        
+        return $redirect;
     }
 
     /**

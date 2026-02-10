@@ -2,7 +2,12 @@
     <x-slot:title>Investments</x-slot:title>
 
     <!-- Stats -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <!-- Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="card p-6">
+            <p class="text-sm font-medium text-slate-500">Pooled Funds</p>
+            <p class="text-3xl font-bold text-amber-600 mt-1">₹{{ number_format($stats['pooled_funds'], 0) }}</p>
+        </div>
         <div class="card p-6">
             <p class="text-sm font-medium text-slate-500">Total Invested</p>
             <p class="text-3xl font-bold text-navy mt-1">₹{{ number_format($stats['total_invested'], 0) }}</p>
@@ -14,6 +19,50 @@
         <div class="card p-6">
             <p class="text-sm font-medium text-slate-500">Active Investments</p>
             <p class="text-3xl font-bold text-navy mt-1">{{ $stats['active_investments'] }}</p>
+        </div>
+    </div>
+
+    <!-- Manual Allocation -->
+    <div class="card mb-6">
+        <div class="p-4 border-b border-gray-100 flex justify-between items-center">
+            <h3 class="text-lg font-bold text-navy">Manual Allocation</h3>
+            <span class="text-xs text-slate-400">Allocate user funds to a specific project</span>
+        </div>
+        <div class="p-4">
+            <form action="{{ route('admin.investments.allocate') }}" method="POST" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                @csrf
+                <div class="flex-1">
+                    <label class="block text-sm font-medium text-slate-600 mb-1">User</label>
+                    <select name="user_id" class="w-full rounded-lg border-gray-300 text-sm" required>
+                        <option value="">Select User</option>
+                        @foreach($users as $user)
+                            <option value="{{ $user->id }}" {{ old('user_id') == $user->id ? 'selected' : '' }}>
+                                {{ $user->name }} (Available: ₹{{ number_format($user->subscription?->amount - $user->subscription?->allocated_amount, 0) }})
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="flex-1">
+                    <label class="block text-sm font-medium text-slate-600 mb-1">Project</label>
+                    <select name="project_id" class="w-full rounded-lg border-gray-300 text-sm" required>
+                        <option value="">Select Project</option>
+                        @foreach($projects as $project)
+                            <option value="{{ $project->id }}" {{ old('project_id') == $project->id ? 'selected' : '' }}>
+                                {{ $project->title }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="flex-1">
+                    <label class="block text-sm font-medium text-slate-600 mb-1">Amount (₹)</label>
+                    <input type="number" name="amount" min="1" step="0.01" class="w-full rounded-lg border-gray-300 text-sm" placeholder="e.g. 5000" required value="{{ old('amount') }}">
+                </div>
+                <div>
+                    <button type="submit" class="w-full px-4 py-2 bg-teal-600 text-white rounded-lg text-sm font-medium hover:bg-teal-700 transition">
+                        Allocate Funds
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -52,6 +101,14 @@
     <div class="card overflow-hidden">
         <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
             <h3 class="text-lg font-bold text-navy">All Investments</h3>
+            <div class="flex gap-2">
+                <form action="{{ route('admin.investments.auto-allocate') }}" method="POST" onsubmit="return confirm('Run Auto-Allocation for ALL eligible auto-mode users?');">
+                    @csrf
+                    <button type="submit" class="btn-secondary text-xs px-3 py-1.5">
+                        Run Auto Allocation
+                    </button>
+                </form>
+            </div>
         </div>
         <div class="overflow-x-auto">
             <table class="w-full">

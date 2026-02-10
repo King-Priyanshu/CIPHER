@@ -32,7 +32,7 @@
                     @forelse($plans as $plan)
                     <tr>
                         <td class="font-medium text-navy">{{ $plan->name }}</td>
-                        <td class="font-numbers text-slate">${{ number_format($plan->price, 2) }} <span class="text-xs uppercase">{{ $plan->currency }}</span></td>
+                        <td class="font-numbers text-slate">₹{{ number_format($plan->price, 2) }} <span class="text-xs uppercase">INR</span></td>
                         <td>{{ ucfirst($plan->interval) }}</td>
                         <td>
                             <span class="{{ $plan->is_active ? 'badge-success' : 'badge-error' }}">

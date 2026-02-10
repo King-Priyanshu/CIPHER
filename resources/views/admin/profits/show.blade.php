@@ -34,7 +34,24 @@
                         <p class="text-sm text-slate-500">Declared At</p>
                         <p class="text-sm font-semibold text-navy">{{ $profit->declared_at?->format('M d, Y H:i') }}</p>
                     </div>
+                    <div>
+                         <p class="text-sm text-slate-500">For Month</p>
+                         <p class="text-sm font-bold text-navy">{{ $profit->month ? $profit->month->format('M Y') : 'N/A' }}</p>
+                    </div>
                 </div>
+
+                @if(!empty($profit->supporting_documents))
+                    <div class="mt-6 border-t border-gray-100 pt-4">
+                        <h4 class="text-sm font-bold text-navy mb-2">Supporting Documents</h4>
+                        <div class="flex flex-wrap gap-2">
+                            @foreach($profit->supporting_documents as $doc)
+                                <a href="{{ Storage::url($doc) }}" target="_blank" class="px-3 py-1.5 bg-slate-100 text-slate-600 rounded text-sm hover:bg-slate-200 transition">
+                                    View Document {{ $loop->iteration }}
+                                </a>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
 
                 @if($profit->notes)
                 <div class="mt-4 p-4 bg-slate-50 rounded-lg">

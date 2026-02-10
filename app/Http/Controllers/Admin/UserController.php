@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Role;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
@@ -26,9 +27,20 @@ class UserController extends Controller
             });
         }
 
-        $users = $query->latest()->paginate(10);
+        // Filter by status
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
 
-        return view('admin.users.index', compact('users'));
+        // Filter by role
+        if ($request->filled('role')) {
+            $query->where('role_id', $request->role);
+        }
+
+        $users = $query->latest()->paginate(10);
+        $roles = Role::all();
+
+        return view('admin.users.index', compact('users', 'roles'));
     }
 
     /**
@@ -36,7 +48,7 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        $user->load(['role', 'subscription', 'projects']);
+        $user->load(['role', 'subscription', 'payments', 'activityLogs' => fn($q) => $q->latest()->limit(10)]);
         return view('admin.users.show', compact('user'));
     }
 
@@ -58,6 +70,7 @@ class UserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$user->id],
             'role' => ['exists:roles,id'],
+            'status' => ['in:active,inactive,banned'],
         ]);
 
         $user->update([
@@ -69,17 +82,105 @@ class UserController extends Controller
             $user->update(['role_id' => $request->role]);
         }
 
+        if ($request->has('status')) {
+            $user->update(['status' => $request->status]);
+        }
+
+        // Log activity
+        ActivityLog::create([
+            'user_id' => auth()->id(),
+            'action' => 'user_updated',
+            'description' => "Updated user: {$user->name}",
+            'entity_type' => 'User',
+            'entity_id' => $user->id,
+            'ip_address' => $request->ip(),
+        ]);
+
         return redirect()->route('admin.users.index')->with('success', 'User updated successfully.');
+    }
+
+    /**
+     * Activate a user.
+     */
+    public function activate(Request $request, User $user)
+    {
+        $user->update(['status' => 'active']);
+
+        ActivityLog::create([
+            'user_id' => auth()->id(),
+            'action' => 'user_activated',
+            'description' => "Activated user: {$user->name}",
+            'entity_type' => 'User',
+            'entity_id' => $user->id,
+            'ip_address' => $request->ip(),
+        ]);
+
+        return back()->with('success', 'User activated successfully.');
+    }
+
+    /**
+     * Deactivate a user.
+     */
+    public function deactivate(Request $request, User $user)
+    {
+        if ($user->id === auth()->id()) {
+            return back()->with('error', 'You cannot deactivate yourself.');
+        }
+
+        $user->update(['status' => 'inactive']);
+
+        ActivityLog::create([
+            'user_id' => auth()->id(),
+            'action' => 'user_deactivated',
+            'description' => "Deactivated user: {$user->name}",
+            'entity_type' => 'User',
+            'entity_id' => $user->id,
+            'ip_address' => $request->ip(),
+        ]);
+
+        return back()->with('success', 'User deactivated successfully.');
+    }
+
+    /**
+     * Ban a user.
+     */
+    public function ban(Request $request, User $user)
+    {
+        if ($user->id === auth()->id()) {
+            return back()->with('error', 'You cannot ban yourself.');
+        }
+
+        $user->update(['status' => 'banned']);
+
+        ActivityLog::create([
+            'user_id' => auth()->id(),
+            'action' => 'user_banned',
+            'description' => "Banned user: {$user->name}",
+            'entity_type' => 'User',
+            'entity_id' => $user->id,
+            'ip_address' => $request->ip(),
+        ]);
+
+        return back()->with('success', 'User banned successfully.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(User $user)
+    public function destroy(Request $request, User $user)
     {
         if ($user->id === auth()->id()) {
             return back()->with('error', 'You cannot delete yourself.');
         }
+
+        ActivityLog::create([
+            'user_id' => auth()->id(),
+            'action' => 'user_deleted',
+            'description' => "Deleted user: {$user->name} ({$user->email})",
+            'entity_type' => 'User',
+            'entity_id' => $user->id,
+            'ip_address' => $request->ip(),
+        ]);
 
         $user->delete();
 

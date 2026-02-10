@@ -35,8 +35,16 @@ class DashboardController extends Controller
             } else {
                 $stats['total_invested'] = 0;
             }
+
+            // Pooled Funds (Total User Wallet Balances)
+            if (Schema::hasTable('wallets')) {
+                $stats['total_pooled_funds'] = \App\Models\Wallet::sum('balance') ?? 0;
+            } else {
+                $stats['total_pooled_funds'] = 0;
+            }
         } catch (\Exception $e) {
             $stats['total_invested'] = 0;
+            $stats['total_pooled_funds'] = 0;
         }
 
         // Add profit distribution stats only if table exists
@@ -51,6 +59,18 @@ class DashboardController extends Controller
         } catch (\Exception $e) {
             $stats['total_profits_distributed'] = 0;
             $stats['pending_distributions'] = 0;
+            $stats['pending_distributions'] = 0;
+        }
+
+        // Add recent logs
+        try {
+            if (Schema::hasTable('activity_logs')) {
+                $stats['recent_logs'] = \App\Models\ActivityLog::with('user')->latest()->take(5)->get();
+            } else {
+                $stats['recent_logs'] = collect([]);
+            }
+        } catch (\Exception $e) {
+            $stats['recent_logs'] = collect([]);
         }
 
         return view('admin.dashboard', compact('stats'));

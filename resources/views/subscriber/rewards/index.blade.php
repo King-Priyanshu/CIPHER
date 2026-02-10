@@ -9,11 +9,11 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div class="card p-6">
                 <p class="text-sm font-medium text-slate-500">Total Earned</p>
-                <p class="text-3xl font-bold text-navy mt-1">${{ number_format($totalRewards ?? 0, 2) }}</p>
+                <p class="text-3xl font-bold text-navy mt-1">₹{{ number_format($totalRewards ?? 0, 2) }}</p>
             </div>
             <div class="card p-6">
                 <p class="text-sm font-medium text-slate-500">Last Payout</p>
-                <p class="text-3xl font-bold text-navy mt-1">$0.00</p>
+                <p class="text-3xl font-bold text-navy mt-1">₹0.00</p>
                 <!-- Placeholder for future logic -->
             </div>
             <div class="card p-6">
@@ -58,7 +58,7 @@
                                         {{ $reward->description }}
                                     </td>
                                     <td class="px-6 py-4 text-right text-sm font-bold text-emerald-600">
-                                        +${{ number_format($reward->amount, 2) }}
+                                        +₹{{ number_format($reward->amount, 2) }}
                                     </td>
                                 </tr>
                             @endforeach

@@ -19,17 +19,17 @@
                                 <p class="text-sm text-slate-500 capitalize">{{ $plan->interval }} Plan</p>
                             </div>
                             <div class="text-right">
-                                <p class="font-bold text-xl text-teal-600">₹{{ number_format($plan->price * 83, 0) }}</p>
+                                <p class="font-bold text-xl text-teal-600">₹{{ number_format($plan->price, 0) }}</p>
                             </div>
                         </div>
                         
                         <div class="flex justify-between items-center text-lg font-bold text-navy">
                             <span>Total</span>
-                            <span class="text-teal-600">₹{{ number_format($plan->price * 83, 0) }}</span>
+                            <span class="text-teal-600">₹{{ number_format($plan->price, 0) }}</span>
                         </div>
 
                         <p class="text-xs text-slate-400 mt-4">
-                            * Recurring subscription. Cancel anytime.
+                            * One-time payment. No auto-renewal.
                         </p>
                     </div>
                 </div>
@@ -89,14 +89,21 @@
                             </div>
                         </form>
 
-                        <button id="pay-button" type="button" class="w-full mt-6 py-4 bg-navy hover:bg-slate-800 text-white text-center font-bold rounded-xl transition shadow-lg hover:shadow-xl hover:-translate-y-0.5">
-                            Subscribe for ₹{{ number_format($plan->price * 83, 0) }}/{{ $plan->interval }}
-                        </button>
+                        <div class="mt-6 p-4 bg-slate-50 rounded-lg border border-slate-200">
+                            <label class="flex items-start cursor-pointer">
+                                <input id="consent_checkbox" type="checkbox" required class="mt-1 w-5 h-5 rounded border-gray-300 text-navy focus:ring-navy">
+                                <div class="ml-3">
+                                    <p class="text-sm font-medium text-navy">I authorize a one-time payment of ₹{{ number_format($plan->price, 0) }}</p>
+                                    <p class="text-xs text-slate-500 mt-1">
+                                        By checking this box, I agree to the <a href="#" class="text-teal-600 underline">Terms of Service</a>. This is a one-time payment and not a recurring subscription.
+                                    </p>
+                                </div>
+                            </label>
+                        </div>
 
-                        <p class="text-center text-xs text-slate-400 mt-4">
-                            By subscribing, you agree to our Terms of Service and Privacy Policy.
-                            Your subscription will auto-renew {{ $plan->interval }}ly.
-                        </p>
+                        <button id="pay-button" type="button" class="w-full mt-6 py-4 bg-navy hover:bg-slate-800 text-white text-center font-bold rounded-xl transition shadow-lg hover:shadow-xl hover:-translate-y-0.5">
+                            Pay ₹{{ number_format($plan->price, 0) }}
+                        </button>
                     </div>
                 </div>
             </div>
@@ -127,9 +134,15 @@
                 const name = document.getElementById('billing_name').value;
                 const email = document.getElementById('billing_email').value;
                 const phone = document.getElementById('billing_phone').value;
+                const consent = document.getElementById('consent_checkbox').checked;
 
                 if (!name || !email || !phone) {
                     showError('Please fill in all billing details.');
+                    return;
+                }
+
+                if (!consent) {
+                    showError('You must agree to the terms to proceed.');
                     return;
                 }
 
@@ -138,7 +151,7 @@
                 payButton.textContent = 'Processing...';
 
                 try {
-                    // Step 1: Create subscription on backend
+                    // Step 1: Create order on backend (was subscription)
                     const response = await fetch('{{ route("checkout.create", $plan->slug) }}', {
                         method: 'POST',
                         headers: {
@@ -155,37 +168,48 @@
                     const data = await response.json();
 
                     if (!data.success) {
-                        showError(data.message || 'Failed to create subscription.');
+                        showError(data.message || 'Failed to initiate payment.');
                         payButton.disabled = false;
-                        payButton.textContent = 'Subscribe for ₹{{ number_format($plan->price * 83, 0) }}/{{ $plan->interval }}';
+                        payButton.textContent = 'Pay ₹{{ number_format($plan->price, 0) }}';
                         return;
                     }
 
-                    // Step 2: Open Razorpay checkout with subscription
+                    // --- MOCK PAYMENT FLOW ---
+                    if (data.mock_success) {
+                        // Direct redirect for mock payment
+                        window.location.href = data.redirect_url;
+                        return;
+                    }
+
+                    // Step 2: Open Razorpay Payment Modal (Standard Order Flow)
                     const options = {
                         key: data.key_id,
-                        subscription_id: data.subscription_id,
-                        name: 'CIPHER',
-                        description: '{{ $plan->name }} Subscription',
-                        prefill: {
-                            name: name,
-                            email: email,
-                            contact: phone,
-                        },
-                        notes: {
-                            plan_name: '{{ $plan->name }}',
-                        },
+                        amount: data.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+                        currency: "INR",
+                        name: data.name,
+                        description: data.description,
+                        image: "/logo.png", // Optional: Add logo if available
+                        order_id: data.order_id, // This is the order_id created in the backend
+                        prefill: data.prefill,
+                        notes: data.notes,
                         theme: {
                             color: '#00BFA6',
                         },
                         handler: function(response) {
-                            // Payment successful - redirect to processing page
-                            window.location.href = '{{ route("checkout.success") }}?subscription_id=' + data.subscription_id;
+                            // Payment successful - redirect to success handler
+                            // We need to send razorpay_payment_id, razorpay_order_id, and razorpay_signature
+                            const queryParams = new URLSearchParams({
+                                razorpay_payment_id: response.razorpay_payment_id,
+                                razorpay_order_id: response.razorpay_order_id,
+                                razorpay_signature: response.razorpay_signature
+                            });
+                            
+                            window.location.href = '{{ route("checkout.success") }}?' + queryParams.toString();
                         },
                         modal: {
                             ondismiss: function() {
                                 payButton.disabled = false;
-                                payButton.textContent = 'Subscribe for ₹{{ number_format($plan->price * 83, 0) }}/{{ $plan->interval }}';
+                                payButton.textContent = 'Pay ₹{{ number_format($plan->price, 0) }}';
                             }
                         }
                     };
@@ -195,7 +219,7 @@
                     rzp.on('payment.failed', function(response) {
                         showError('Payment failed: ' + response.error.description);
                         payButton.disabled = false;
-                        payButton.textContent = 'Subscribe for ₹{{ number_format($plan->price * 83, 0) }}/{{ $plan->interval }}';
+                        payButton.textContent = 'Pay ₹{{ number_format($plan->price, 0) }}';
                     });
 
                     rzp.open();
@@ -204,7 +228,7 @@
                     console.error('Checkout error:', error);
                     showError('An error occurred. Please try again.');
                     payButton.disabled = false;
-                    payButton.textContent = 'Subscribe for ₹{{ number_format($plan->price * 83, 0) }}/{{ $plan->interval }}';
+                    payButton.textContent = 'Pay ₹{{ number_format($plan->price, 0) }}';
                 }
             };
         });

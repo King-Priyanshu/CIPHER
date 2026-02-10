@@ -22,9 +22,16 @@ class User extends Authenticatable
         'email',
         'password',
         'role_id',
+        'status',
         'terms_accepted_at',
         'razorpay_customer_id',
         'phone',
+        'participation_mode',
+        'referral_code',
+        'referred_by',
+        'payment_reminders_enabled',
+        'payment_reminder_method',
+        'payment_reminder_days',
     ];
 
     /**
@@ -121,6 +128,58 @@ class User extends Authenticatable
     }
 
     /**
+     * Get all project investments made by this user.
+     */
+    public function investments()
+    {
+        return $this->hasMany(ProjectInvestment::class);
+    }
+
+    /**
+     * Get all profit logs for this user.
+     */
+    public function profitLogs()
+    {
+        return $this->hasMany(UserProfitLog::class);
+    }
+
+    /**
+     * The user who referred this user.
+     */
+    public function referrer()
+    {
+        return $this->belongsTo(User::class, 'referred_by');
+    }
+
+    /**
+     * Users referred by this user.
+     */
+    public function referrals()
+    {
+        return $this->hasMany(User::class, 'referred_by');
+    }
+    
+    /**
+     * Boot method to auto-generate referral code.
+     */
+    protected static function booted()
+    {
+        static::creating(function ($user) {
+            if (empty($user->referral_code)) {
+                $user->referral_code = strtoupper(\Illuminate\Support\Str::random(8));
+            }
+        });
+    }
+
+    /**
+     * Get the user's membership card.
+     */
+    public function membershipCard()
+    {
+        return $this->hasOne(MembershipCard::class);
+    }
+
+    /**
      * Check if user has an active subscription.
      */
     public function hasActiveSubscription(): bool
@@ -133,5 +192,21 @@ class User extends Authenticatable
 
         return $subscription->status === 'active' && 
                ($subscription->ends_at === null || $subscription->ends_at->isFuture());
+    }
+
+    /**
+     * Get all SIPs associated with the user.
+     */
+    public function sips()
+    {
+        return $this->hasMany(Sip::class);
+    }
+
+    /**
+     * Get all refund requests made by the user.
+     */
+    public function refunds()
+    {
+        return $this->hasMany(Refund::class);
     }
 }

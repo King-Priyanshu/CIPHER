@@ -13,7 +13,9 @@
                     <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                         <div>
                             <div class="flex items-center gap-3 mb-2">
-                                <h3 class="text-xl font-bold text-navy">{{ $project->title }}</h3>
+                                <h3 class="text-xl font-bold text-navy hover:text-teal-600 transition">
+                                    <a href="{{ route('subscriber.projects.show', $project) }}">{{ $project->title }}</a>
+                                </h3>
                                 <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold {{ $project->status === 'active' ? 'bg-emerald-100 text-emerald-800 border border-emerald-200' : 'bg-slate-100 text-slate-800' }}">
                                     {{ ucfirst($project->status) }}
                                 </span>
@@ -25,18 +27,55 @@
                         </div>
                         
                         <!-- Funding Progress -->
-                        <div class="w-full md:w-64 bg-slate-50 p-4 rounded-xl border border-gray-100">
-                            <div class="flex justify-between text-sm mb-2">
-                                <span class="text-slate-500">Funded</span>
-                                <span class="font-bold text-navy">{{ number_format(($project->current_fund / max($project->fund_goal, 1)) * 100, 0) }}%</span>
+                        <div class="w-full md:w-64">
+                            <div class="bg-slate-50 p-4 rounded-xl border border-gray-100 mb-4">
+                                <div class="flex justify-between text-sm mb-2">
+                                    <span class="text-slate-500">Funded</span>
+                                    <span class="font-bold text-navy">{{ number_format(($project->current_fund / max($project->fund_goal, 1)) * 100, 0) }}%</span>
+                                </div>
+                                <div class="w-full bg-slate-200 rounded-full h-2 mb-3">
+                                    <div class="bg-teal h-2 rounded-full" style="width: {{ min(($project->current_fund / max($project->fund_goal, 1)) * 100, 100) }}%"></div>
+                                </div>
+                                <div class="flex justify-between text-xs mb-3">
+                                    <span class="text-slate-500">Goal: ₹{{ number_format($project->fund_goal, 0) }}</span>
+                                    <span class="text-navy font-semibold">₹{{ number_format($project->current_fund, 0) }} raised</span>
+                                </div>
+
+                                {{-- User Allocation Display --}}
+                                @php
+                                    $userInvestment = $project->investments->sum('amount');
+                                @endphp
+                                @if($userInvestment > 0)
+                                    <div class="pt-3 border-t border-slate-100 flex justify-between items-center">
+                                        <span class="text-xs text-slate-500">Your Allocation</span>
+                                        <span class="text-sm font-bold text-teal-600">₹{{ number_format($userInvestment, 0) }}</span>
+                                    </div>
+                                @endif
                             </div>
-                            <div class="w-full bg-slate-200 rounded-full h-2 mb-3">
-                                <div class="bg-teal h-2 rounded-full" style="width: {{ min(($project->current_fund / max($project->fund_goal, 1)) * 100, 100) }}%"></div>
-                            </div>
-                            <div class="flex justify-between text-xs">
-                                <span class="text-slate-500">Goal: ${{ number_format($project->fund_goal, 0) }}</span>
-                                <span class="text-navy font-semibold">${{ number_format($project->current_fund, 0) }} raised</span>
-                            </div>
+
+                            @if($user->participation_mode === 'manual')
+                                @if($availableBalance > 0)
+                                    <form action="{{ route('subscriber.investments.store') }}" method="POST" class="mt-2 text-center">
+                                        @csrf
+                                        <input type="hidden" name="project_id" value="{{ $project->id }}">
+                                        <!-- For simplicity, allowing to contribute full balance or split? 
+                                             Let's make it simple for now: "Contribute ₹X" button or input. 
+                                             Given "low-literacy", simpler is better. Maybe preset amounts or "Contribute All Available"?
+                                             Let's show an input for flexibility but defaulted to available.
+                                        -->
+                                        <div class="flex gap-2">
+                                            <input type="number" name="amount" min="1" max="{{ $availableBalance }}" value="{{ floor($availableBalance) }}" class="w-full text-sm border-gray-200 rounded-lg" placeholder="Amount">
+                                            <button type="submit" class="bg-teal-600 hover:bg-teal-700 text-white px-3 py-2 rounded-lg text-sm font-bold transition">
+                                                Contribute
+                                            </button>
+                                        </div>
+                                    </form>
+                                @else
+                                    <button disabled class="w-full bg-slate-100 text-slate-400 px-4 py-2 rounded-lg text-sm font-medium cursor-not-allowed">
+                                        No funds available
+                                    </button>
+                                @endif
+                            @endif
                         </div>
                     </div>
                 </div>

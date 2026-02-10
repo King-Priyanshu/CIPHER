@@ -22,7 +22,7 @@
                     </div>
 
                     <div>
-                        <label for="total_amount" class="block text-sm font-medium text-navy mb-1.5">Total Amount ($)</label>
+                        <label for="total_amount" class="block text-sm font-medium text-navy mb-1.5">Total Amount (₹)</label>
                         <input type="number" name="total_amount" id="total_amount" value="{{ old('total_amount', $pool->total_amount) }}" step="0.01" min="0" required
                             class="input-field font-numbers">
                         @error('total_amount')
@@ -31,7 +31,7 @@
                     </div>
 
                     <div>
-                        <label for="allocated_amount" class="block text-sm font-medium text-navy mb-1.5">Allocated Amount ($)</label>
+                        <label for="allocated_amount" class="block text-sm font-medium text-navy mb-1.5">Allocated Amount (₹)</label>
                         <input type="number" name="allocated_amount" id="allocated_amount" value="{{ old('allocated_amount', $pool->allocated_amount) }}" step="0.01" min="0"
                             class="input-field font-numbers">
                         @error('allocated_amount')

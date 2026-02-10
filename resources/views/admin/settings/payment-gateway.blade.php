@@ -52,7 +52,7 @@
                         <div>
                             <label for="razorpay_secret" class="block text-sm font-semibold text-navy mb-1.5">API Key Secret</label>
                             <input type="password" name="razorpay_secret" id="razorpay_secret" 
-                                   placeholder="••••••••••••••••"
+                                   placeholder="Leave blank to keep existing"
                                    class="w-full rounded-lg border-gray-300 focus:border-teal-500 focus:ring-teal-500 font-mono text-sm">
                             <p class="text-xs text-slate-400 mt-1">Leave blank to keep existing secret</p>
                         </div>
@@ -60,7 +60,7 @@
                         <div>
                             <label for="razorpay_webhook_secret" class="block text-sm font-semibold text-navy mb-1.5">Webhook Secret</label>
                             <input type="password" name="razorpay_webhook_secret" id="razorpay_webhook_secret" 
-                                   placeholder="••••••••••••••••"
+                                   placeholder="Leave blank to keep existing"
                                    class="w-full rounded-lg border-gray-300 focus:border-teal-500 focus:ring-teal-500 font-mono text-sm">
                             <p class="text-xs text-slate-400 mt-1">For verifying webhook signatures (optional but recommended)</p>
                         </div>

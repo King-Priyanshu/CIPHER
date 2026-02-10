@@ -11,33 +11,36 @@ class SubscriptionPlanSeeder extends Seeder
     {
         $plans = [
             [
-                'name' => 'Seed Plan',
-                'slug' => 'seed',
-                'description' => 'Perfect for starting your journey in community projects.',
-                'price' => 29.00,
+                'name' => 'Daily Saver',
+                'slug' => 'daily-saver',
+                'description' => 'Start small with just ₹1 per day. Build the habit of saving.',
+                'price' => 30.00,
                 'interval' => 'monthly',
-                'currency' => 'USD',
+                'currency' => 'INR',
                 'is_active' => true,
             ],
             [
-                'name' => 'Growth Plan',
-                'slug' => 'growth',
-                'description' => 'Accelerate your contribution and potential rewards.',
-                'price' => 79.00,
+                'name' => 'Standard Member',
+                'slug' => 'standard',
+                'description' => 'The complete community participation plan.',
+                'price' => 365.00,
                 'interval' => 'monthly',
-                'currency' => 'USD',
+                'currency' => 'INR',
                 'is_active' => true,
             ],
             [
-                'name' => 'Visionary Plan',
-                'slug' => 'visionary',
-                'description' => 'Maximum impact for serious community builders.',
-                'price' => 199.00,
+                'name' => 'Premium Member',
+                'slug' => 'premium',
+                'description' => 'Maximize your contribution and community impact.',
+                'price' => 730.00,
                 'interval' => 'monthly',
-                'currency' => 'USD',
+                'currency' => 'INR',
                 'is_active' => true,
             ],
         ];
+
+        // Deactivate old plans (optional cleanup)
+        SubscriptionPlan::whereNotIn('slug', array_column($plans, 'slug'))->update(['is_active' => false]);
 
         foreach ($plans as $plan) {
             SubscriptionPlan::updateOrCreate(['slug' => $plan['slug']], $plan);

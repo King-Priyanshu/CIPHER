@@ -12,6 +12,12 @@ git pull origin main
 # Install dependencies
 composer install --no-dev --optimize-autoloader
 
+# Install npm dependencies
+npm ci
+
+# Build frontend assets
+npm run build
+
 # Migrate database
 php artisan migrate --force
 

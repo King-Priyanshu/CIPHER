@@ -144,6 +144,20 @@
                            placeholder="Repeat your password">
                 </div>
 
+                <!-- Referral Code (Optional) -->
+                <div>
+                    <label for="referral_code" class="block text-sm font-medium text-navy mb-1.5">Referral Code <span class="text-slate-400 font-normal">(Optional)</span></label>
+                    <input id="referral_code" 
+                           name="referral_code" 
+                           type="text" 
+                           value="{{ old('referral_code', request('ref')) }}"
+                           class="input-field"
+                           placeholder="Enter referral code if you have one">
+                    @error('referral_code')
+                        <p class="mt-1.5 text-sm text-error">{{ $message }}</p>
+                    @enderror
+                </div>
+
                 <!-- Terms -->
                 <div class="flex items-start">
                     <input id="terms" 

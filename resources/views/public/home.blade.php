@@ -1,245 +1,186 @@
-<x-layouts.guest>
-    <div class="bg-white font-sans text-slate-600">
-        
-        <!-- Hero Section -->
-        <section class="relative pt-20 pb-32 overflow-hidden">
-            <div class="absolute inset-0 bg-slate-50 opacity-50"></div>
-            <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[1200px] h-[500px] bg-gradient-to-r from-teal-50 to-blue-50 blur-3xl opacity-30 rounded-full pointer-events-none"></div>
+<x-layouts.public>
+    <x-slot:title>
+        CIPHER - Invest Together, Grow Wealth
+    </x-slot:title>
 
-            <div class="relative max-w-7xl mx-auto px-6 lg:px-8 flex flex-col items-center text-center">
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-blue-800 text-xs font-semibold uppercase tracking-wide mb-8">
-                    <span class="w-2 h-2 rounded-full bg-blue-500"></span>
-                    Community Driven Investment
-                </div>
-                
-                <h1 class="text-5xl md:text-6xl lg:text-7xl font-bold text-navy tracking-tight mb-8">
-                    A Community That <br class="hidden md:block" />
-                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-blue-600">Grows Together</span>
-                </h1>
-                
-                <p class="text-xl text-slate-500 max-w-2xl mb-10 leading-relaxed">
-                    CIPHER is a collective growth platform. We pool resources to fund vetted real-world projects and share the rewards through trust and transparency.
-                </p>
-                
-                <div class="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-                    <a href="#how-it-works" class="px-8 py-4 bg-navy text-white font-semibold rounded-xl hover:bg-slate-800 transition shadow-lg hover:shadow-xl hover:-translate-y-0.5">
-                        How It Works
-                    </a>
-                    <a href="#pricing" class="px-8 py-4 bg-white text-navy font-semibold border border-slate-200 rounded-xl hover:bg-slate-50 transition shadow-sm hover:shadow-md">
-                        View Plans
-                    </a>
-                </div>
+    <!-- Hero Section -->
+    <div class="relative min-h-screen flex items-center justify-center overflow-hidden">
+        <!-- Background Effects -->
+        <div class="absolute inset-0 z-0">
+            <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-slate-900 via-[#0F172A] to-[#0A2540]"></div>
+            <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-teal-500/10 rounded-full blur-[100px] animate-float-premium"></div>
+            <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-indigo-500/20 rounded-full blur-[100px] animate-float-premium" style="animation-delay: -2s"></div>
+        </div>
 
-                <!-- Trust Badges -->
-                <div class="mt-16 pt-8 border-t border-slate-100 flex flex-wrap justify-center gap-x-12 gap-y-6 text-sm text-slate-400 font-medium font-mono uppercase tracking-wider">
-                    <span class="flex items-center gap-2">
-                        <svg class="w-4 h-4 text-teal-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-                        Transparent Funds
-                    </span>
-                    <span class="flex items-center gap-2">
-                        <svg class="w-4 h-4 text-teal-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-                        Audited Projects
-                    </span>
-                    <span class="flex items-center gap-2">
-                        <svg class="w-4 h-4 text-teal-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-                        Secure Platform
-                    </span>
-                </div>
-            </div>
-        </section>
-
-        <!-- Trust / Philosophy Section -->
-        <section class="py-24 bg-white">
-            <div class="max-w-7xl mx-auto px-6 lg:px-8">
-                <div class="grid md:grid-cols-3 gap-12">
-                    <div class="p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:border-blue-100 transition duration-300">
-                        <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center mb-6">
-                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                        </div>
-                        <h3 class="text-lg font-bold text-navy mb-3">Community First</h3>
-                        <p class="text-slate-500 leading-relaxed">
-                            We believe in the power of the collective. By pooling small contributions, we unlock opportunities typically reserved for institutional investors.
-                        </p>
+        <div class="relative z-10 max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center py-20">
+            <!-- Text Content -->
+            <div class="space-y-8 text-center lg:text-left animate-reveal-blur">
+                <div>
+                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-md mb-6">
+                        <span class="w-2 h-2 rounded-full bg-teal-400 animate-pulse"></span>
+                        <span class="text-teal-400 text-sm font-medium tracking-wide">Next-Gen Investment DAO</span>
                     </div>
                     
-                    <div class="p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:border-teal-100 transition duration-300">
-                        <div class="w-12 h-12 rounded-xl bg-teal-100 text-teal-600 flex items-center justify-center mb-6">
-                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                        </div>
-                        <h3 class="text-lg font-bold text-navy mb-3">Transparency Core</h3>
-                        <p class="text-slate-500 leading-relaxed">
-                            Trust is earned. We provide detailed reports on fund allocation, project performance, and reward distribution. No black boxes.
-                        </p>
-                    </div>
+                    <h1 class="text-5xl lg:text-7xl font-black text-white leading-tight tracking-tight">
+                        Invest <span class="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-cyan-400">Together</span>,<br />
+                        Grow <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">Wealth</span>
+                    </h1>
+                </div>
 
-                    <div class="p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:border-purple-100 transition duration-300">
-                        <div class="w-12 h-12 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center mb-6">
-                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                <p class="text-xl text-slate-300 max-w-xl mx-auto lg:mx-0 leading-relaxed">
+                    Join a vetted community of {{ count($projects) * 400 + 1200 }}+ members pooling resources into high-yield real-world projects. Transparency at every step.
+                </p>
+                
+                <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                    <a href="{{ route('register') }}" class="px-8 py-4 bg-teal-500 hover:bg-teal-400 text-slate-900 font-bold rounded-xl transition-all hover:scale-105 shadow-lg shadow-teal-500/20">
+                        Get Started
+                    </a>
+                    <a href="#projects" class="px-8 py-4 bg-white/5 border border-white/10 text-white font-bold rounded-xl hover:bg-white/10 transition-all">
+                        Browse Projects
+                    </a>
+                </div>
+            </div>
+
+            <!-- Visual / Card Stack -->
+            <div class="hidden lg:block animate-reveal-3d">
+                <div class="relative bg-slate-800/50 backdrop-blur-xl border border-white/10 p-8 rounded-3xl shadow-2xl">
+                    <div class="flex items-center justify-between mb-8">
+                        <div>
+                            <div class="text-slate-400 text-sm font-medium">Community Assets</div>
+                            <div class="text-4xl font-black text-white mt-1">₹{{ number_format(1450000) }}</div>
                         </div>
-                        <h3 class="text-lg font-bold text-navy mb-3">Real Impact</h3>
-                        <p class="text-slate-500 leading-relaxed">
-                            We fund projects that generate real value—from sustainable agriculture to tech startups—creating a sustainable ecosystem for everyone.
-                        </p>
+                        <div class="w-12 h-12 bg-teal-500/20 rounded-full flex items-center justify-center">
+                            <svg class="w-6 h-6 text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                        </div>
+                    </div>
+                    <!-- Mini Graph -->
+                    <div class="h-32 flex items-end gap-2 mb-8">
+                        @foreach([30, 50, 40, 70, 60, 90, 80, 100] as $h)
+                            <div class="flex-1 bg-teal-500/20 hover:bg-teal-400 transition-all rounded-t-lg" style="height: {{ $h }}%"></div>
+                        @endforeach
+                    </div>
+                    <div class="space-y-3">
+                        <div class="p-4 bg-white/5 rounded-xl border border-white/5 flex justify-between">
+                            <span class="text-slate-300">Active Projects</span>
+                            <span class="text-white font-bold">12</span>
+                        </div>
+                        <div class="p-4 bg-white/5 rounded-xl border border-white/5 flex justify-between">
+                            <span class="text-slate-300">Avg. Annual ROI</span>
+                            <span class="text-teal-400 font-bold">14.2%</span>
+                        </div>
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
+    </div>
 
-        <!-- How It Works -->
-        <section id="how-it-works" class="py-24 bg-navy text-white relative overflow-hidden">
-            <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
-            
-            <div class="relative max-w-7xl mx-auto px-6 lg:px-8">
-                <div class="text-center mb-16">
-                    <h2 class="text-3xl md:text-4xl font-bold mb-4">How It Works</h2>
-                    <p class="text-slate-400 max-w-2xl mx-auto">A simple, cyclical ecosystem designed for sustainability.</p>
-                </div>
-
-                <div class="grid md:grid-cols-4 gap-8 relative">
-                    <!-- Connector Line (Desktop) -->
-                    <div class="hidden md:block absolute top-12 left-0 w-full h-0.5 bg-gradient-to-r from-teal-500/0 via-teal-500/50 to-teal-500/0"></div>
-
-                    <!-- Step 1 -->
-                    <div class="relative flex flex-col items-center text-center">
-                        <div class="w-24 h-24 rounded-full bg-slate-800 border-4 border-navy flex items-center justify-center z-10 mb-6 group hover:scale-105 transition">
-                            <span class="text-3xl">🤝</span>
-                        </div>
-                        <h3 class="text-xl font-bold mb-2">1. Subscribe</h3>
-                        <p class="text-slate-400 text-sm">Join a membership plan to access the platform and community.</p>
-                    </div>
-
-                    <!-- Step 2 -->
-                    <div class="relative flex flex-col items-center text-center">
-                        <div class="w-24 h-24 rounded-full bg-slate-800 border-4 border-navy flex items-center justify-center z-10 mb-6 group hover:scale-105 transition">
-                            <span class="text-3xl">💰</span>
-                        </div>
-                        <h3 class="text-xl font-bold mb-2">2. Fund Pool</h3>
-                        <p class="text-slate-400 text-sm">Membership fees are aggregated into our community fund pools.</p>
-                    </div>
-
-                    <!-- Step 3 -->
-                    <div class="relative flex flex-col items-center text-center">
-                        <div class="w-24 h-24 rounded-full bg-slate-800 border-4 border-navy flex items-center justify-center z-10 mb-6 group hover:scale-105 transition">
-                            <span class="text-3xl">🚀</span>
-                        </div>
-                        <h3 class="text-xl font-bold mb-2">3. Projects</h3>
-                        <p class="text-slate-400 text-sm">Funds are allocated to high-potential real-world projects.</p>
-                    </div>
-
-                    <!-- Step 4 -->
-                    <div class="relative flex flex-col items-center text-center">
-                        <div class="w-24 h-24 rounded-full bg-slate-800 border-4 border-navy flex items-center justify-center z-10 mb-6 group hover:scale-105 transition">
-                            <span class="text-3xl">🎁</span>
-                        </div>
-                        <h3 class="text-xl font-bold mb-2">4. Rewards</h3>
-                        <p class="text-slate-400 text-sm">Profits are distributed back to the community as rewards.</p>
-                    </div>
-                </div>
+    <!-- Featured Projects -->
+    <section id="projects" class="py-32 bg-slate-950">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-20 animate-reveal-blur">
+                <span class="text-indigo-400 font-bold tracking-widest uppercase text-sm mb-2 block">Live Opportunities</span>
+                <h2 class="text-4xl lg:text-5xl font-black text-white mb-6">Invest in Vetted Projects</h2>
+                <div class="h-1.5 w-24 bg-gradient-to-r from-teal-400 to-indigo-500 mx-auto rounded-full"></div>
             </div>
-        </section>
 
-        <!-- Pricing Section -->
-        <section id="pricing" class="py-24 bg-slate-50">
-            <div class="max-w-7xl mx-auto px-6 lg:px-8">
-                <div class="text-center mb-16">
-                    <h2 class="text-3xl md:text-4xl font-bold text-navy mb-4">Membership Plans</h2>
-                    <p class="text-slate-500 max-w-2xl mx-auto">Choose your level of contribution. Upgrade or cancel anytime.</p>
-                </div>
-
-                <div class="grid lg:grid-cols-3 gap-8 items-start">
-                    @forelse($plans as $plan)
-                        <div class="bg-white rounded-2xl p-8 border {{ $plan->slug === 'growth' ? 'border-teal-400 shadow-xl relative' : 'border-slate-200' }}">
-                            @if($plan->slug === 'growth')
-                                <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-teal-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
-                                    Most Popular
+            <div class="grid md:grid-cols-3 gap-8">
+                @forelse($projects as $project)
+                    <div class="bg-slate-900 rounded-3xl overflow-hidden border border-white/5 group hover:border-teal-500/30 transition-all duration-500 flex flex-col h-full">
+                        <div class="relative h-56 overflow-hidden">
+                            <img src="{{ $project->image_url ?? 'https://images.unsplash.com/photo-1560179707-f14e90ef3623?auto=format&fit=crop&w=800' }}" alt="{{ $project->title }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                            <div class="absolute inset-0 bg-gradient-to-t from-slate-900 to-transparent"></div>
+                            <div class="absolute bottom-4 left-4">
+                                <span class="bg-teal-500 text-slate-900 text-[10px] font-black uppercase px-2 py-1 rounded">Featured</span>
+                            </div>
+                        </div>
+                        <div class="p-6 flex-1 flex flex-col bg-slate-800/50">
+                            <h3 class="text-xl font-bold text-white mb-2 group-hover:text-teal-400 transition-colors">{{ $project->title }}</h3>
+                            <p class="text-slate-400 text-sm mb-6 line-clamp-2">{{ $project->description }}</p>
+                            
+                            <div class="grid grid-cols-2 gap-4 mb-6 mt-auto">
+                                <div>
+                                    <p class="text-[10px] text-slate-500 uppercase font-bold tracking-widest mb-1">Target ROI</p>
+                                    <p class="text-lg font-black text-teal-400">{{ $project->roi_percentage ?? '12-15' }}%</p>
                                 </div>
-                            @endif
-
-                            <h3 class="text-xl font-bold text-navy mb-2">{{ $plan->name }}</h3>
-                            <p class="text-slate-500 text-sm mb-6">{{ $plan->description }}</p>
-
-                            <div class="flex items-end gap-1 mb-8">
-                                <span class="text-4xl font-bold text-navy">${{ number_format($plan->price, 0) }}</span>
-                                <span class="text-slate-400 mb-1">/ {{ $plan->interval }}</span>
+                                <div>
+                                    <p class="text-[10px] text-slate-500 uppercase font-bold tracking-widest mb-1">Duration</p>
+                                    <p class="text-lg font-black text-white">{{ $project->duration_months ?? 12 }} Mo</p>
+                                </div>
                             </div>
 
-                            @auth
-                                <a href="{{ route('checkout.show', $plan->slug) }}" class="block w-full py-3 px-6 rounded-xl font-semibold text-center transition {{ $plan->slug === 'growth' ? 'bg-teal-500 text-white hover:bg-teal-600' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }}">
-                                    Get Started
-                                </a>
-                            @else
-                                <a href="{{ route('login', ['redirect' => route('checkout.show', $plan->slug)]) }}" class="block w-full py-3 px-6 rounded-xl font-semibold text-center transition {{ $plan->slug === 'growth' ? 'bg-teal-500 text-white hover:bg-teal-600' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }}">
-                                    Get Started
-                                </a>
-                            @endauth
-
-                            <ul class="mt-8 space-y-4 text-sm text-slate-600">
-                                <li class="flex items-center gap-3">
-                                    <svg class="w-5 h-5 text-teal-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                                    <span>Access to community dashboard</span>
-                                </li>
-                                <li class="flex items-center gap-3">
-                                    <svg class="w-5 h-5 text-teal-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                                    <span>Participation in fund pools</span>
-                                </li>
-                                @if($plan->slug !== 'seed')
-                                    <li class="flex items-center gap-3">
-                                        <svg class="w-5 h-5 text-teal-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                                        <span>Voting rights on projects</span>
-                                    </li>
-                                @endif
-                                @if($plan->slug === 'visionary')
-                                    <li class="flex items-center gap-3">
-                                        <svg class="w-5 h-5 text-teal-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                                        <span>Priority reward distribution</span>
-                                    </li>
-                                @endif
-                            </ul>
+                            <a href="{{ route('projects.show', $project->id) }}" class="w-full py-3 bg-white/5 hover:bg-white/10 text-white font-bold text-center rounded-xl border border-white/10 transition-all">
+                                View Analysis
+                            </a>
                         </div>
-                    @empty
-                        <div class="col-span-3 text-center py-12 text-slate-400">
-                            Loading membership plans...
+                    </div>
+                @empty
+                    <!-- Mock Data if none exists -->
+                     @foreach([1,2,3] as $i)
+                        <div class="bg-slate-900 rounded-3xl overflow-hidden border border-white/5 flex flex-col h-full opacity-60">
+                             <div class="h-56 bg-slate-800 animate-pulse"></div>
+                             <div class="p-6 space-y-4">
+                                 <div class="h-6 w-2/3 bg-slate-800 rounded"></div>
+                                 <div class="h-12 w-full bg-slate-800 rounded"></div>
+                                 <div class="grid grid-cols-2 gap-4">
+                                     <div class="h-8 bg-slate-800 rounded"></div>
+                                     <div class="h-8 bg-slate-800 rounded"></div>
+                                 </div>
+                             </div>
                         </div>
-                    @endforelse
-                </div>
+                     @endforeach
+                @endforelse
             </div>
-        </section>
 
-        <!-- CTA Section -->
-        <section class="py-24 bg-white border-t border-slate-100">
-            <div class="max-w-4xl mx-auto px-6 text-center">
-                <h2 class="text-3xl font-bold text-navy mb-6">Ready to join the movement?</h2>
-                <p class="text-slate-500 text-lg mb-10">
-                    Be part of a community that values long-term growth and collective success. No hidden fees, no complexity.
-                </p>
-                <div class="flex justify-center gap-4">
-                    <a href="{{ route('register') }}" class="px-8 py-4 bg-teal-500 text-white font-semibold rounded-xl hover:bg-teal-600 transition shadow-lg hover:shadow-xl hover:-translate-y-0.5">
-                        Create Account
-                    </a>
-                    <a href="{{ route('login') }}" class="px-8 py-4 text-slate-600 font-semibold hover:text-navy transition">
-                        Log In
-                    </a>
-                </div>
+            <div class="mt-16 text-center">
+                <a href="{{ route('projects.index') }}" class="text-indigo-400 font-bold hover:text-indigo-300 transition flex items-center justify-center gap-2 group">
+                    View All Active Opportunities 
+                    <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                </a>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <!-- Footer -->
-        <footer class="bg-navy text-slate-400 py-12 border-t border-slate-800">
-            <div class="max-w-7xl mx-auto px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-6">
-                <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-lg bg-teal-500 flex items-center justify-center text-white font-bold text-sm">C</div>
-                    <span class="text-white font-bold text-lg">CIPHER</span>
-                </div>
-                <div class="text-sm">
-                    &copy; {{ date('Y') }} Cipher Community. All rights reserved.
-                </div>
-                <div class="flex gap-6 text-sm">
-                    <a href="#" class="hover:text-white transition">Privacy</a>
-                    <a href="#" class="hover:text-white transition">Terms</a>
-                    <a href="#" class="hover:text-white transition">Contact</a>
-                </div>
+    <!-- Pricing Section -->
+    <section id="pricing" class="py-32 bg-slate-900">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-20 animate-reveal-blur">
+                <h2 class="text-3xl md:text-5xl font-black text-white mb-6">Choose Your Membership</h2>
+                <p class="text-slate-400 max-w-2xl mx-auto">Join the pool that fits your growth goals.</p>
             </div>
-        </footer>
 
-    </div>
-</x-layouts.guest>
+            <div class="grid lg:grid-cols-3 gap-8 items-start">
+                @foreach($plans as $plan)
+                    <div class="bg-slate-800/50 backdrop-blur-md rounded-3xl p-8 border {{ $plan->slug === 'growth' ? 'border-teal-500 shadow-teal-500/10 shadow-2xl relative' : 'border-white/5' }}">
+                        @if($plan->slug === 'growth')
+                            <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-teal-500 text-slate-900 text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest">
+                                Most Popular
+                            </div>
+                        @endif
+
+                        <h3 class="text-2xl font-bold text-white mb-2">{{ $plan->name }}</h3>
+                        <p class="text-slate-400 text-sm mb-8">{{ $plan->description }}</p>
+
+                        <div class="flex items-baseline gap-1 mb-8">
+                            <span class="text-5xl font-black text-white">₹{{ number_format($plan->price, 0) }}</span>
+                            <span class="text-slate-500 text-sm font-bold">/{{ $plan->interval }}</span>
+                        </div>
+
+                        <a href="{{ route('checkout.show', $plan->slug) }}" class="block w-full py-4 rounded-2xl font-black text-center transition-all {{ $plan->slug === 'growth' ? 'bg-teal-500 text-slate-900 hover:bg-teal-400' : 'bg-white/5 text-white hover:bg-white/10' }}">
+                            Get Started
+                        </a>
+
+                        <ul class="mt-10 space-y-4 text-sm text-slate-300">
+                            @foreach(['Access to Dashboard', 'Community Pool Entry', 'Monthly Dividends'] as $feature)
+                            <li class="flex items-center gap-3">
+                                <svg class="w-5 h-5 text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                <span>{{ $feature }}</span>
+                            </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </section>
+
+</x-layouts.public>

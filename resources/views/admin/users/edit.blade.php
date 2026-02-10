@@ -40,7 +40,7 @@
                     <label for="role" class="block text-sm font-medium text-navy mb-1.5">Role</label>
                     <select id="role" name="role" class="input-field">
                         @foreach($roles as $role)
-                            <option value="{{ $role->id }}" {{ $user->roles->contains($role->id) ? 'selected' : '' }}>
+                            <option value="{{ $role->id }}" {{ $user->role_id == $role->id ? 'selected' : '' }}>
                                 {{ ucfirst($role->name) }}
                             </option>
                         @endforeach

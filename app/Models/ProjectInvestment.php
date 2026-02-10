@@ -14,6 +14,8 @@ class ProjectInvestment extends Model
         'project_id',
         'subscription_id',
         'amount',
+        'allocation_type',
+        'admin_id',
         'status',
         'allocated_at',
     ];
@@ -40,6 +42,11 @@ class ProjectInvestment extends Model
     public function subscription()
     {
         return $this->belongsTo(UserSubscription::class, 'subscription_id');
+    }
+
+    public function admin()
+    {
+        return $this->belongsTo(User::class, 'admin_id');
     }
 
     public function profitLogs()

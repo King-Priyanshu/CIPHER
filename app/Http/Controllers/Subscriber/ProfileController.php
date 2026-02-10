@@ -22,11 +22,19 @@ class ProfileController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . Auth::id()],
+            'participation_mode' => ['required', 'in:auto,manual'],
+            'payment_reminders_enabled' => ['boolean'],
+            'payment_reminder_method' => ['string', 'in:email,sms,both'],
+            'payment_reminder_days' => ['integer', 'min:1', 'max:14'],
         ]);
 
         $request->user()->update([
             'name' => $request->name,
             'email' => $request->email,
+            'participation_mode' => $request->participation_mode,
+            'payment_reminders_enabled' => $request->payment_reminders_enabled,
+            'payment_reminder_method' => $request->payment_reminder_method,
+            'payment_reminder_days' => $request->payment_reminder_days,
         ]);
 
         return back()->with('status', 'profile-updated');

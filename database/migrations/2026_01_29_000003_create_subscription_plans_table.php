@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->text('description')->nullable();
             $table->decimal('price', 10, 2);
-            $table->string('currency')->default('USD');
+            $table->string('currency')->default('INR');
             $table->enum('interval', ['monthly', 'quarterly', 'annual']);
             $table->integer('trial_days')->default(0);
             $table->boolean('is_active')->default(true);

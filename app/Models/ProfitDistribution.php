@@ -11,6 +11,7 @@ class ProfitDistribution extends Model
 
     protected $fillable = [
         'project_id',
+        'month',
         'total_profit',
         'distributed_amount',
         'status',
@@ -18,6 +19,7 @@ class ProfitDistribution extends Model
         'distributed_at',
         'declared_by',
         'notes',
+        'supporting_documents',
     ];
 
     protected $casts = [
@@ -25,6 +27,8 @@ class ProfitDistribution extends Model
         'distributed_amount' => 'decimal:2',
         'declared_at' => 'datetime',
         'distributed_at' => 'datetime',
+        'month' => 'date',
+        'supporting_documents' => 'array',
     ];
 
     const STATUS_PENDING = 'pending';

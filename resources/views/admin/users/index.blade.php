@@ -15,9 +15,9 @@
         </div>
 
         <form method="GET" action="{{ route('admin.users.index') }}"
-              class="flex w-full sm:w-auto items-center gap-3">
+              class="flex w-full sm:w-auto items-center gap-3 flex-wrap">
 
-            <div class="relative w-full sm:w-80">
+            <div class="relative w-full sm:w-64">
                 <input
                     type="text"
                     name="search"
@@ -33,8 +33,22 @@
                 </div>
             </div>
 
+            <select name="status" class="rounded-lg border-gray-300 text-sm h-11">
+                <option value="">All Status</option>
+                <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Active</option>
+                <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
+                <option value="banned" {{ request('status') == 'banned' ? 'selected' : '' }}>Banned</option>
+            </select>
+
+            <select name="role" class="rounded-lg border-gray-300 text-sm h-11">
+                <option value="">All Roles</option>
+                @foreach($roles as $role)
+                    <option value="{{ $role->id }}" {{ request('role') == $role->id ? 'selected' : '' }}>{{ $role->name }}</option>
+                @endforeach
+            </select>
+
             <button type="submit" class="btn-primary h-11 px-6 text-sm">
-                Search
+                Filter
             </button>
         </form>
     </div>
@@ -48,6 +62,7 @@
                 <th class="pl-6">User</th>
                 <th>Email</th>
                 <th>Role</th>
+                <th>Status</th>
                 <th>Joined</th>
                 <th class="text-right pr-6">Actions</th>
             </tr>
@@ -87,12 +102,21 @@
                         </div>
                     </td>
 
+                    <td>
+                        <span class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium
+                            {{ $user->status === 'active' ? 'bg-green-100 text-green-800' : '' }}
+                            {{ $user->status === 'inactive' ? 'bg-yellow-100 text-yellow-800' : '' }}
+                            {{ $user->status === 'banned' ? 'bg-red-100 text-red-800' : '' }}">
+                            {{ ucfirst($user->status ?? 'active') }}
+                        </span>
+                    </td>
+
                     <td class="whitespace-nowrap text-sm text-slate-600">
                         {{ $user->created_at->format('M d, Y') }}
                     </td>
 
                     <td class="text-right pr-6">
-                        <div class="flex justify-end gap-2">
+                        <div class="flex justify-end gap-2 flex-wrap">
                             <a href="{{ route('admin.users.show', $user) }}"
                                class="action-btn action-view">View</a>
 
@@ -100,15 +124,36 @@
                                class="action-btn action-edit">Edit</a>
 
                             @if($user->id !== auth()->id())
-                                <form method="POST"
-                                      action="{{ route('admin.users.destroy', $user) }}"
-                                      onsubmit="return confirm('Delete this user?')"
+                                @if($user->status !== 'active')
+                                    <form method="POST" action="{{ route('admin.users.activate', $user) }}" class="inline">
+                                        @csrf
+                                        <button class="action-btn bg-green-50 text-green-700 hover:bg-green-100">Activate</button>
+                                    </form>
+                                @endif
+
+                                @if($user->status === 'active')
+                                    <form method="POST" action="{{ route('admin.users.deactivate', $user) }}" class="inline">
+                                        @csrf
+                                        <button class="action-btn bg-yellow-50 text-yellow-700 hover:bg-yellow-100">Deactivate</button>
+                                    </form>
+                                @endif
+
+                                @if($user->status !== 'banned')
+                                    <form method="POST" action="{{ route('admin.users.ban', $user) }}"
+                                          onsubmit="return confirm('Are you sure you want to ban this user?')" class="inline">
+                                        @csrf
+                                        <button class="action-btn action-delete">Ban</button>
+                                    </form>
+                                @endif
+                            @endif
+                            
+                            @if($user->id !== auth()->id())
+                                <form method="POST" action="{{ route('admin.users.destroy', $user) }}" 
+                                      onsubmit="return confirm('Are you sure you want to PERMANENTLY delete this user? This action cannot be undone.')" 
                                       class="inline">
                                     @csrf
                                     @method('DELETE')
-                                    <button class="action-btn action-delete">
-                                        Delete
-                                    </button>
+                                    <button class="action-btn bg-red-50 text-red-700 hover:bg-red-100 hover:text-red-800">Delete</button>
                                 </form>
                             @endif
                         </div>
@@ -117,7 +162,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="5" class="text-center py-16 text-slate-400">
+                    <td colspan="6" class="text-center py-16 text-slate-400">
                         <div class="flex flex-col items-center justify-center gap-2">
                             <span class="text-3xl opacity-50">👥</span>
                              <span>No users found</span>
@@ -131,8 +176,9 @@
     </div>
 
     <div class="mt-6">
-        {{ $users->links() }}
+        {{ $users->withQueryString()->links() }}
     </div>
 
 </div>
 @endsection
+

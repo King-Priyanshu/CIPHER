@@ -24,11 +24,17 @@ class ProjectController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
+            'business_type' => 'nullable|string|max:255',
             'description' => 'required|string',
+            'royalty_model' => 'nullable|string',
             'fund_goal' => 'required|numeric|min:0',
-            'status' => 'required|in:draft,active,completed,cancelled',
+            'status' => 'required|in:draft,active,paused,completed,cancelled',
+            'visibility_status' => 'required|in:visible,hidden',
+            'allocation_eligibility' => 'required|in:manual_only,auto_only,both',
             'starts_at' => 'nullable|date',
             'ends_at' => 'nullable|date|after:starts_at',
+            'risk_level' => 'required|in:low,medium,high',
+            'outcome_description' => 'nullable|string',
         ]);
 
         $validated['slug'] = Str::slug($validated['title']);
@@ -47,12 +53,17 @@ class ProjectController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
+            'business_type' => 'nullable|string|max:255',
             'description' => 'required|string',
+            'royalty_model' => 'nullable|string',
             'fund_goal' => 'required|numeric|min:0',
-            'current_fund' => 'nullable|numeric|min:0',
-            'status' => 'required|in:draft,active,completed,cancelled',
+            'status' => 'required|in:draft,active,paused,completed,cancelled',
+            'visibility_status' => 'required|in:visible,hidden',
+            'allocation_eligibility' => 'required|in:manual_only,auto_only,both',
             'starts_at' => 'nullable|date',
             'ends_at' => 'nullable|date|after:starts_at',
+            'risk_level' => 'required|in:low,medium,high',
+            'outcome_description' => 'nullable|string',
         ]);
 
         $validated['slug'] = Str::slug($validated['title']);

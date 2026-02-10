@@ -2,6 +2,7 @@
 
 namespace App\Services\Payment;
 
+use App\Models\Setting;
 use App\Models\SubscriptionPlan;
 use App\Models\User;
 use App\Models\UserSubscription;
@@ -10,16 +11,50 @@ use Illuminate\Support\Facades\Log;
 
 class RazorpayService
 {
-    protected string $keyId;
-    protected string $keySecret;
+    protected ?string $keyId = null;
+    protected ?string $keySecret = null;
     protected string $baseUrl = 'https://api.razorpay.com/v1';
 
     public function __construct()
     {
-        $this->keyId = config('services.razorpay.key');
-        $this->keySecret = config('services.razorpay.secret');
+        // Don't load in constructor to avoid DB errors during bootstrapping/migrations
     }
 
+    protected function ensureCredentialsLoaded(): void
+    {
+        if ($this->keyId !== null && $this->keySecret !== null) {
+            return;
+        }
+
+        try {
+            $this->keyId = trim(Setting::get('razorpay.key') ?? config('services.razorpay.key') ?? '');
+            $this->keySecret = trim(Setting::get('razorpay.secret') ?? config('services.razorpay.secret') ?? '');
+        } catch (\Exception $e) {
+            // Fallback for migrations
+            $this->keyId = config('services.razorpay.key') ?? '';
+            $this->keySecret = config('services.razorpay.secret') ?? '';
+        }
+    }
+
+    /**
+     * Create an order in Razorpay.
+     */
+    public function createOrder(int $amount, string $currency = 'INR', array $receipt = []): ?array
+    {
+        $response = $this->request('POST', '/orders', [
+            'amount' => $amount * 100, // Convert to paise
+            'currency' => $currency,
+            'receipt' => $receipt['receipt_id'] ?? uniqid('order_'),
+            'payment_capture' => 1, // Auto-capture payment
+        ]);
+
+        if ($response && isset($response['id'])) {
+            return $response;
+        }
+
+        return null;
+    }
+    
     /**
      * Create a subscription plan in Razorpay.
      */
@@ -30,7 +65,7 @@ class RazorpayService
             'interval' => 1,
             'item' => [
                 'name' => $plan->name,
-                'amount' => (int) ($plan->price * 83 * 100), // Convert USD to INR paise
+                'amount' => (int) ($plan->price * 100), // Prices are already in INR, convert to paise
                 'currency' => 'INR',
                 'description' => $plan->description ?? '',
             ],
@@ -74,9 +109,17 @@ class RazorpayService
     /**
      * Create a subscription for a user.
      */
-    public function createSubscription(User $user, SubscriptionPlan $plan): ?array
+    public function createSubscription(User $user, SubscriptionPlan $plan, array $data = []): ?array
     {
-        // Ensure plan has Razorpay plan ID
+        // 1. Ensure user has customer ID (Test Basic Connectivity first)
+        $customerId = $this->createCustomer($user);
+        if (!$customerId) {
+            Log::error('Failed to create Razorpay customer', ['user_id' => $user->id]);
+            // If this fails, it's Auth/Network issue.
+            return null;
+        }
+
+        // 2. Ensure plan has Razorpay plan ID (Test Subscriptions Product)
         if (!$plan->razorpay_plan_id) {
             $this->createPlan($plan);
             $plan->refresh();
@@ -84,13 +127,7 @@ class RazorpayService
 
         if (!$plan->razorpay_plan_id) {
             Log::error('Failed to create Razorpay plan', ['plan_id' => $plan->id]);
-            return null;
-        }
-
-        // Ensure user has customer ID
-        $customerId = $this->createCustomer($user);
-        if (!$customerId) {
-            Log::error('Failed to create Razorpay customer', ['user_id' => $user->id]);
+            // If this fails but Customer succeeded, then Subscriptions are disabled.
             return null;
         }
 
@@ -232,29 +269,67 @@ class RazorpayService
      */
     protected function request(string $method, string $endpoint, array $data = []): ?array
     {
+        // Hardcode base URL to ensure no hidden characters from property
+        $url = 'https://api.razorpay.com/v1' . $endpoint;
+
+        // Log request for debugging
+        Log::info('Razorpay API Request', [
+            'method' => $method,
+            'url' => $url,
+            // 'data' => $data, // interacting with logs might leak PII, be careful
+        ]);
+
+        $this->ensureCredentialsLoaded();
         try {
-            $response = Http::withBasicAuth($this->keyId, $this->keySecret)
-                ->timeout(30)
-                ->$method($this->baseUrl . $endpoint, $data);
+            $http = Http::withBasicAuth($this->keyId, $this->keySecret)
+                ->asJson()
+                ->acceptJson()
+                ->timeout(30);
+
+            // Handle GET vs POST explicitly to ensure correct data placement
+            if (strtoupper($method) === 'GET') {
+                $response = $http->get($url, $data);
+            } else {
+                $response = $http->post($url, $data);
+            }
 
             if ($response->successful()) {
                 return $response->json();
             }
 
+            // Capture specific error
+            $errorBody = $response->json();
+            $errorMessage = $errorBody['error']['description'] ?? $response->body();
+            
             Log::error('Razorpay API error', [
                 'endpoint' => $endpoint,
                 'status' => $response->status(),
-                'response' => $response->json(),
+                'error' => $errorMessage,
             ]);
 
-            return null;
+            // Add hint for common "URL not found" error on Plans/Subscriptions
+            if (str_contains($errorMessage, 'URL was not found') && str_contains($endpoint, 'plans')) {
+                throw new \Exception("Razorpay Error: Subscriptions Product is NOT ENABLED on your Dashboard. Please go to Razorpay Dashboard > Settings > Products and enable 'Subscriptions'.");
+            }
+
+            // THROW the error so we can see it
+            throw new \Exception('Razorpay API Error: ' . $errorMessage);
+
         } catch (\Exception $e) {
+            // Re-throw if it's the exception we just threw
+            if (str_starts_with($e->getMessage(), 'Razorpay API')) {
+                throw $e;
+            }
+            if (str_starts_with($e->getMessage(), 'Razorpay Error:')) {
+                throw $e;
+            }
+
             Log::error('Razorpay API exception', [
                 'endpoint' => $endpoint,
                 'error' => $e->getMessage(),
             ]);
 
-            return null;
+            throw new \Exception('Razorpay Connection Error: ' . $e->getMessage());
         }
     }
 }

@@ -22,13 +22,13 @@
                     @forelse($invoices as $invoice)
                         <tr class="hover:bg-slate-50/50 transition">
                             <td class="px-6 py-4 text-sm text-slate-600">
-                                {{ $invoice->date()->toFormattedDateString() }}
+                                {{ $invoice->issued_at->toFormattedDateString() }}
                             </td>
                             <td class="px-6 py-4 text-sm text-navy font-medium">
-                                {{ $invoice->lines->data[0]->description ?? 'Subscription Charge' }}
+                                {{ $invoice->payment->description ?? 'Subscription Payment' }}
                             </td>
                             <td class="px-6 py-4 text-sm font-bold text-navy">
-                                {{ $invoice->total() }}
+                                ₹{{ number_format($invoice->amount, 2) }}
                             </td>
                             <td class="px-6 py-4">
                                 @if($invoice->status == 'paid')
@@ -42,7 +42,7 @@
                                 @endif
                             </td>
                             <td class="px-6 py-4 text-right">
-                                <a href="{{ $invoice->hosted_invoice_url }}" target="_blank" class="text-indigo-600 hover:text-indigo-800 text-sm font-semibold hover:underline">
+                                <a href="{{ route('subscriber.invoices.download', $invoice) }}" class="text-indigo-600 hover:text-indigo-800 text-sm font-semibold hover:underline">
                                     Download PDF
                                 </a>
                             </td>

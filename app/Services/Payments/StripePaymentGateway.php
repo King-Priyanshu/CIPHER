@@ -32,7 +32,7 @@ class StripePaymentGateway implements PaymentGatewayInterface
     /**
      * Process a one-time payment.
      */
-    public function processPayment(User $user, int $amount, string $currency = 'USD', array $options = []): Payment
+    public function processPayment(User $user, int $amount, string $currency = 'INR', array $options = []): Payment
     {
         // TODO: Implement Stripe payment processing
         throw new \RuntimeException('Stripe payment processing not implemented');

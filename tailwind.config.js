@@ -13,27 +13,45 @@ export default {
         extend: {
             fontFamily: {
                 sans: ['Inter', ...defaultTheme.fontFamily.sans],
+                numbers: ['Space Grotesk', ...defaultTheme.fontFamily.sans],
             },
             colors: {
-                // Premium "Cipher" Palette
-                indigo: {
-                    50: '#f0f4ff',
-                    100: '#e0e8ff',
-                    200: '#c7d2fe',
-                    300: '#a5b4fc',
-                    400: '#818cf8',
-                    500: '#6366f1',
-                    600: '#4f46e5',
-                    700: '#4338ca',
-                    800: '#3730a3',
-                    900: '#312e81',
-                    950: '#1e1b4b',
+                // Primary Colors
+                navy: {
+                    DEFAULT: '#1A2F4B',
                 },
-                gray: {
-                    850: '#1f2937',
-                    900: '#111827',
-                    950: '#030712', // Deep rich black for dark mode
-                }
+                teal: {
+                    DEFAULT: '#00BFA6',
+                    dark: '#00A893',
+                    light: '#E0F7F4',
+                },
+                // Secondary Colors
+                slate: {
+                    DEFAULT: '#64748B',
+                    50: '#F8FAFC',
+                    100: '#F1F5F9',
+                    200: '#E2E8F0',
+                    300: '#CBD5E1',
+                    400: '#94A3B8',
+                    500: '#64748B',
+                    600: '#475569',
+                    700: '#334155',
+                    800: '#1E293B',
+                    900: '#0F172A',
+                },
+                // Accent Colors
+                success: {
+                    DEFAULT: '#10B981',
+                },
+                warning: {
+                    DEFAULT: '#F59E0B',
+                },
+                error: {
+                    DEFAULT: '#EF4444',
+                },
+                purple: {
+                    DEFAULT: '#8B5CF6',
+                },
             }
         },
     },

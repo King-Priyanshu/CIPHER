@@ -81,6 +81,16 @@
             </div>
         </div>
         
+        <!-- Pooled Funds (Available for Allocation) -->
+        <div class="card p-6 bg-gradient-to-br from-indigo-50 to-purple-50 border-indigo-100">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-indigo-600">Pooled Funds (Users' Wallets)</p>
+                    <p class="text-2xl font-bold text-navy mt-1">₹{{ number_format($stats['total_pooled_funds'] ?? 0, 0) }}</p>
+                </div>
+            </div>
+        </div>
+        
         <!-- Total Profits Distributed -->
         <div class="card p-6 bg-gradient-to-br from-green-50 to-emerald-50 border-green-100">
             <div class="flex items-center justify-between">
@@ -111,7 +121,7 @@
     </div>
 
     <!-- Quick Actions & Recent Payments -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
         <!-- Quick Actions -->
         <div class="bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl shadow-lg p-6 text-white">
             <h3 class="text-lg font-bold mb-4">Quick Actions</h3>
@@ -128,69 +138,43 @@
                     </svg>
                     <span class="text-sm font-medium">Manage Projects</span>
                 </a>
-                @if(Route::has('admin.payments.index'))
-                <a href="{{ route('admin.payments.index') }}" class="flex items-center gap-3 p-3 rounded-lg bg-white/10 hover:bg-white/20 transition">
+                <a href="{{ route('admin.audit-logs.index') }}" class="flex items-center gap-3 p-3 rounded-lg bg-white/10 hover:bg-white/20 transition">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
                     </svg>
-                    <span class="text-sm font-medium">View Payments</span>
+                    <span class="text-sm font-medium">Audit Logs</span>
                 </a>
-                @endif
-                @if(Route::has('admin.settings.payment-gateway'))
-                <a href="{{ route('admin.settings.payment-gateway') }}" class="flex items-center gap-3 p-3 rounded-lg bg-teal-500 hover:bg-teal-600 transition">
-                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                    <span class="text-sm font-medium">Payment Settings</span>
-                </a>
-                @endif
             </div>
         </div>
 
-        <!-- Recent Payments -->
+        <!-- Recent Logs -->
         <div class="lg:col-span-2 card overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-                <h3 class="text-lg font-bold text-navy">Recent Payments</h3>
+                <h3 class="text-lg font-bold text-navy">Recent Activity</h3>
+                <a href="{{ route('admin.audit-logs.index') }}" class="text-sm text-blue-600 hover:underline">View All</a>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full">
-                    <thead class="bg-slate-50 border-b border-gray-100">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase">User</th>
-                            <th class="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase">Amount</th>
-                            <th class="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase">Status</th>
-                            <th class="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase">Date</th>
-                        </tr>
-                    </thead>
                     <tbody class="divide-y divide-gray-100">
-                        @forelse($stats['recent_payments'] ?? [] as $payment)
+                        @forelse($stats['recent_logs'] ?? [] as $log)
                         <tr class="hover:bg-slate-50/50 transition">
-                            <td class="px-6 py-3">
-                                <div class="flex items-center">
-                                    <div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-sm">
-                                        {{ substr($payment->user->name ?? 'U', 0, 1) }}
-                                    </div>
-                                    <div class="ml-3">
-                                        <p class="text-sm font-semibold text-navy">{{ $payment->user->name ?? 'Unknown' }}</p>
-                                    </div>
-                                </div>
+                            <td class="px-6 py-3 text-sm font-medium text-navy">
+                                {{ $log->user->name ?? 'System' }}
                             </td>
-                            <td class="px-6 py-3 text-sm font-bold text-navy">₹{{ number_format($payment->amount ?? 0, 0) }}</td>
-                            <td class="px-6 py-3">
-                                <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium 
-                                    {{ $payment->status == 'succeeded' ? 'bg-green-100 text-green-800' : '' }}
-                                    {{ $payment->status == 'pending' ? 'bg-yellow-100 text-yellow-800' : '' }}
-                                    {{ $payment->status == 'failed' ? 'bg-red-100 text-red-800' : '' }}">
-                                    {{ ucfirst($payment->status ?? 'N/A') }}
-                                </span>
+                            <td class="px-6 py-3 text-sm text-slate-600">
+                                {{ $log->action }}
                             </td>
-                            <td class="px-6 py-3 text-sm text-slate-500">{{ $payment->created_at?->format('M d, Y') ?? '-' }}</td>
+                            <td class="px-6 py-3 text-sm text-slate-500 max-w-xs truncate">
+                                {{ $log->description }}
+                            </td>
+                            <td class="px-6 py-3 text-sm text-slate-400 text-right">
+                                {{ $log->created_at->diffForHumans() }}
+                            </td>
                         </tr>
                         @empty
                         <tr>
                             <td colspan="4" class="px-6 py-8 text-center text-slate-400">
-                                No payments yet
+                                No activity recorded yet
                             </td>
                         </tr>
                         @endforelse

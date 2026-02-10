@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('gateway'); // stripe, razorpay
             $table->string('gateway_transaction_id')->nullable();
             $table->decimal('amount', 10, 2);
-            $table->string('currency')->default('USD');
+            $table->string('currency')->default('INR');
             $table->enum('status', ['pending', 'succeeded', 'failed', 'refunded']);
             $table->timestamp('paid_at')->nullable();
             $table->timestamps();

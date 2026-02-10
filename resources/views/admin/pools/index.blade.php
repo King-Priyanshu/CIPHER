@@ -32,8 +32,8 @@
                     @forelse($pools as $pool)
                     <tr>
                         <td class="font-medium text-navy">{{ $pool->name }}</td>
-                        <td class="font-numbers text-teal font-semibold">${{ number_format($pool->total_amount, 2) }}</td>
-                        <td class="font-numbers text-slate">${{ number_format($pool->allocated_amount, 2) }}</td>
+                        <td class="font-numbers text-teal font-semibold">₹{{ number_format($pool->total_amount, 2) }}</td>
+                        <td class="font-numbers text-slate">₹{{ number_format($pool->allocated_amount, 2) }}</td>
                         <td class="text-slate text-sm">
                             {{ $pool->period_start->format('M d, Y') }} - {{ $pool->period_end->format('M d, Y') }}
                         </td>

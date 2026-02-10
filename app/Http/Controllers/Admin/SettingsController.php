@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Setting;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Artisan;
 
 class SettingsController extends Controller
 {
@@ -14,9 +14,11 @@ class SettingsController extends Controller
     public function paymentGateway()
     {
         $settings = [
-            'razorpay_key' => config('services.razorpay.key'),
-            'razorpay_configured' => !empty(config('services.razorpay.key')) && !empty(config('services.razorpay.secret')),
-            'webhook_url' => url('/webhooks/razorpay'),
+            'razorpay_key' => Setting::get('razorpay.key') ?? config('services.razorpay.key'),
+            'razorpay_secret' => Setting::get('razorpay.secret') ?? config('services.razorpay.secret'),
+            'razorpay_webhook_secret' => Setting::get('razorpay.webhook_secret') ?? config('services.razorpay.webhook_secret'),
+            'razorpay_configured' => !empty(Setting::get('razorpay.key') ?? config('services.razorpay.key')),
+            'webhook_url' => route('webhooks.razorpay'),
         ];
 
         return view('admin.settings.payment-gateway', compact('settings'));
@@ -33,40 +35,18 @@ class SettingsController extends Controller
             'razorpay_webhook_secret' => 'nullable|string',
         ]);
 
-        // Update .env file
-        $this->updateEnv([
-            'RAZORPAY_KEY_ID' => $request->razorpay_key,
-            'RAZORPAY_KEY_SECRET' => $request->razorpay_secret,
-            'RAZORPAY_WEBHOOK_SECRET' => $request->razorpay_webhook_secret,
-        ]);
-
-        // Clear config cache
-        Artisan::call('config:clear');
-
-        return redirect()->back()->with('success', 'Payment gateway settings updated successfully.');
-    }
-
-    /**
-     * Update .env file.
-     */
-    protected function updateEnv(array $data): void
-    {
-        $envPath = base_path('.env');
-        $envContent = file_get_contents($envPath);
-
-        foreach ($data as $key => $value) {
-            if ($value === null) continue;
-
-            $pattern = "/^{$key}=.*/m";
-            $replacement = "{$key}={$value}";
-
-            if (preg_match($pattern, $envContent)) {
-                $envContent = preg_replace($pattern, $replacement, $envContent);
-            } else {
-                $envContent .= "\n{$replacement}";
-            }
+        if ($request->filled('razorpay_key')) {
+            Setting::set('razorpay.key', $request->input('razorpay_key'));
         }
 
-        file_put_contents($envPath, $envContent);
+        if ($request->filled('razorpay_secret')) {
+            Setting::set('razorpay.secret', $request->input('razorpay_secret'));
+        }
+
+        if ($request->filled('razorpay_webhook_secret')) {
+            Setting::set('razorpay.webhook_secret', $request->input('razorpay_webhook_secret'));
+        }
+
+        return redirect()->back()->with('success', 'Payment gateway settings updated successfully.');
     }
 }

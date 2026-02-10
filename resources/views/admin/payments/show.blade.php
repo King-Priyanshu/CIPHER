@@ -23,7 +23,7 @@
                     </div>
                     <div>
                         <p class="text-sm text-slate-500">Currency</p>
-                        <p class="text-lg font-semibold text-navy">{{ $payment->currency ?? 'INR' }}</p>
+                        <p class="text-lg font-semibold text-navy">INR</p>
                     </div>
                     <div>
                         <p class="text-sm text-slate-500">Gateway</p>

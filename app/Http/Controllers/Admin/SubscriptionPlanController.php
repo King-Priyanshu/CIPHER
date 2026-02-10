@@ -32,7 +32,7 @@ class SubscriptionPlanController extends Controller
         ]);
 
         $validated['slug'] = Str::slug($validated['name']);
-        $validated['currency'] = 'USD';
+        $validated['currency'] = 'INR';
         $validated['is_active'] = $request->has('is_active');
 
         SubscriptionPlan::create($validated);

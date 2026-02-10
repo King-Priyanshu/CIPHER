@@ -59,8 +59,8 @@
                     <tr>
                         <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase">ID</th>
                         <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase">User</th>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase">Amount</th>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase">Gateway</th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase">Gross Amount</th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase">Transaction ID</th>
                         <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase">Status</th>
                         <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase">Date</th>
                         <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase">Actions</th>
@@ -82,7 +82,10 @@
                             </div>
                         </td>
                         <td class="px-6 py-4 text-sm font-bold text-navy">₹{{ number_format($payment->amount, 2) }}</td>
-                        <td class="px-6 py-4 text-sm text-slate-600 capitalize">{{ $payment->gateway ?? 'N/A' }}</td>
+                        <td class="px-6 py-4">
+                            <p class="text-sm text-slate-600 font-mono">{{ $payment->gateway_transaction_id ?? 'N/A' }}</p>
+                            <span class="text-xs text-slate-400 capitalize">{{ $payment->gateway }}</span>
+                        </td>
                         <td class="px-6 py-4">
                             <span class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium
                                 {{ $payment->status === 'succeeded' ? 'bg-green-100 text-green-800' : '' }}

@@ -10,5 +10,6 @@ Artisan::command('inspire', function () {
 
 // Subscription & Payment Scheduled Tasks
 Schedule::command('subscriptions:expire-grace-periods')->daily();
+Schedule::command('subscriptions:expire')->daily(); // New Command
 Schedule::command('rewards:distribute')->weekly();
 Schedule::command('sitemap:generate')->weekly();

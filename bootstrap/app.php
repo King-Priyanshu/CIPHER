@@ -23,9 +23,15 @@ return Application::configure(basePath: dirname(__DIR__))
             'terms.accepted' => \App\Http\Middleware\EnsureTermsAccepted::class,
             'security.headers' => \App\Http\Middleware\SecurityHeaders::class,
         ]);
+
+        $middleware->validateCsrfTokens(except: [
+            '/test-payment/pay',
+            '/webhooks/*',
+        ]);
         
         // Apply security headers to all web routes
         $middleware->append(\App\Http\Middleware\SecurityHeaders::class);
+        $middleware->append(\App\Http\Middleware\CheckReferral::class);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

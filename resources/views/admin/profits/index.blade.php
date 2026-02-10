@@ -42,6 +42,7 @@
                         <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase">Total Profit</th>
                         <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase">Distributed</th>
                         <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase">Status</th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase">Month</th>
                         <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase">Declared By</th>
                         <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase">Date</th>
                         <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase">Actions</th>
@@ -63,6 +64,7 @@
                                 {{ ucfirst($dist->status) }}
                             </span>
                         </td>
+                        <td class="px-6 py-4 text-sm font-medium text-navy">{{ $dist->month ? $dist->month->format('M Y') : '-' }}</td>
                         <td class="px-6 py-4 text-sm text-slate-600">{{ $dist->declaredBy->name }}</td>
                         <td class="px-6 py-4 text-sm text-slate-500">{{ $dist->declared_at?->format('M d, Y') }}</td>
                         <td class="px-6 py-4">
