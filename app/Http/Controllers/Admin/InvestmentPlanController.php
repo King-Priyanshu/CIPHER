@@ -13,10 +13,12 @@ class InvestmentPlanController extends Controller
     /**
      * Display a listing of investment plans.
      */
+     * Display a listing of investment plans.
+     */
     public function index()
     {
         $plans = InvestmentPlan::with('project')->latest()->paginate(10);
-        return view('admin.plans.index', compact('plans'));
+        return view('admin.investment-plans.index', compact('plans'));
     }
 
     /**
@@ -27,7 +29,7 @@ class InvestmentPlanController extends Controller
         $projects = Project::where('status', 'active')->get(); // Only active projects? or all?
         // Let's allow all for now
         $projects = Project::all();
-        return view('admin.plans.create', compact('projects'));
+        return view('admin.investment-plans.create', compact('projects'));
     }
 
     /**
@@ -58,7 +60,7 @@ class InvestmentPlanController extends Controller
 
         InvestmentPlan::create($validated);
 
-        return redirect()->route('admin.plans.index')->with('success', 'Investment Plan created successfully.');
+        return redirect()->route('admin.investment-plans.index')->with('success', 'Investment Plan created successfully.');
     }
 
     /**
@@ -66,7 +68,7 @@ class InvestmentPlanController extends Controller
      */
     public function show(InvestmentPlan $investmentPlan)
     {
-        return view('admin.plans.show', compact('investmentPlan'));
+        return view('admin.investment-plans.show', compact('investmentPlan'));
     }
 
     /**
@@ -75,7 +77,7 @@ class InvestmentPlanController extends Controller
     public function edit(InvestmentPlan $investmentPlan)
     {
         $projects = Project::all();
-        return view('admin.plans.edit', compact('investmentPlan', 'projects'));
+        return view('admin.investment-plans.edit', compact('investmentPlan', 'projects'));
     }
 
     /**
@@ -108,7 +110,7 @@ class InvestmentPlanController extends Controller
 
         $investmentPlan->update($validated);
 
-        return redirect()->route('admin.plans.index')->with('success', 'Investment Plan updated successfully.');
+        return redirect()->route('admin.investment-plans.index')->with('success', 'Investment Plan updated successfully.');
     }
 
     /**
@@ -117,6 +119,6 @@ class InvestmentPlanController extends Controller
     public function destroy(InvestmentPlan $investmentPlan)
     {
         $investmentPlan->delete();
-        return redirect()->route('admin.plans.index')->with('success', 'Investment Plan deleted successfully.');
+        return redirect()->route('admin.investment-plans.index')->with('success', 'Investment Plan deleted successfully.');
     }
 }

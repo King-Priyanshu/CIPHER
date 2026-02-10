@@ -209,4 +209,20 @@ class User extends Authenticatable
     {
         return $this->hasMany(Refund::class);
     }
+
+    /**
+     * Get the user's wallet.
+     */
+    public function wallet()
+    {
+        return $this->hasOne(Wallet::class);
+    }
+
+    /**
+     * Get user's wallet balance.
+     */
+    public function getWalletBalanceAttribute(): float
+    {
+        return (float) ($this->wallet?->balance ?? 0.0);
+    }
 }

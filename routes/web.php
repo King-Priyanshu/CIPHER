@@ -73,6 +73,8 @@ Route::middleware(['auth', 'verified'])->prefix('app')->group(function () {
     Route::put('/sip/{id}', [App\Http\Controllers\Subscriber\SipController::class, 'update'])->name('subscriber.sip.update');
     Route::post('/sip/{id}/cancel', [App\Http\Controllers\Subscriber\SipController::class, 'cancel'])->name('subscriber.sip.cancel');
     Route::get('/sip/{id}/payment-schedule', [App\Http\Controllers\Subscriber\SipController::class, 'paymentSchedule'])->name('subscriber.sip.payment-schedule');
+    Route::get('/sip-payment/{id}', [App\Http\Controllers\Subscriber\SipController::class, 'payment'])->name('subscriber.sip.payment');
+    Route::post('/sip-payment/verify', [App\Http\Controllers\Subscriber\SipController::class, 'verify'])->name('subscriber.sip.verify');
 
     // ROI Simulator
     Route::get('/roi-simulator', function () {
@@ -84,6 +86,11 @@ Route::middleware(['auth', 'verified'])->prefix('app')->group(function () {
     Route::get('/refunds/create', [App\Http\Controllers\Subscriber\RefundController::class, 'create'])->name('subscriber.refunds.create');
     Route::post('/refunds', [App\Http\Controllers\Subscriber\RefundController::class, 'store'])->name('subscriber.refunds.store');
     Route::get('/refunds/{id}', [App\Http\Controllers\Subscriber\RefundController::class, 'show'])->name('subscriber.refunds.show');
+
+    // Wallet Deposit Routes
+    Route::get('/deposit/add', [App\Http\Controllers\Subscriber\DepositController::class, 'create'])->name('subscriber.deposit.create');
+    Route::post('/deposit/order', [App\Http\Controllers\Subscriber\DepositController::class, 'store'])->name('subscriber.deposit.store');
+    Route::post('/deposit/verify', [App\Http\Controllers\Subscriber\DepositController::class, 'verify'])->name('subscriber.deposit.verify');
 
 });
 

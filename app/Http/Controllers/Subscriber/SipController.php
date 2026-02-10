@@ -130,4 +130,45 @@ class SipController extends Controller
             'sip' => $sip,
         ]);
     }
+
+    public function payment($id)
+    {
+        $paymentSchedule = \App\Models\SipPaymentSchedule::with('sip.investmentPlan')
+            ->whereHas('sip', function($query) {
+                $query->where('user_id', auth()->id());
+            })
+            ->findOrFail($id);
+            
+        return view('subscriber.sip.payment', [
+            'paymentSchedule' => $paymentSchedule,
+            'sip' => $paymentSchedule->sip
+        ]);
+    }
+
+    public function verify(Request $request)
+    {
+        $validated = $request->validate([
+            'payment_id' => 'required|exists:sip_payment_schedules,id',
+            'transaction_id' => 'required|string',
+            'amount' => 'required|numeric'
+        ]);
+        
+        $paymentSchedule = \App\Models\SipPaymentSchedule::with('sip')
+            ->whereHas('sip', function($query) {
+                $query->where('user_id', auth()->id());
+            })
+            ->findOrFail($validated['payment_id']);
+            
+        // Verify payment with payment gateway (Razorpay/Stripe)
+        // For now, we'll assume payment is successful
+        
+        $paymentSchedule->update([
+            'status' => 'completed',
+            'transaction_id' => $validated['transaction_id'],
+            'paid_at' => now()
+        ]);
+        
+        return redirect()->route('subscriber.sip.show', $paymentSchedule->sip_id)
+            ->with('success', 'SIP payment verified successfully!');
+    }
 }

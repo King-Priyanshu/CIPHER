@@ -230,6 +230,10 @@
                         <svg class="w-5 h-5 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
                         Payment History
                     </a>
+                    <a href="{{ route('subscriber.deposit.create') }}" class="flex items-center gap-3 p-3 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 transition text-sm font-bold border border-emerald-500/30">
+                        <svg class="w-5 h-5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+                        Add Funds
+                    </a>
                 </div>
             </div>
 

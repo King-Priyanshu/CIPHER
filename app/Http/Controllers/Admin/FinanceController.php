@@ -209,7 +209,7 @@ class FinanceController extends Controller
      */
     public function refunds(Request $request)
     {
-        $query = Refund::with(['user', 'investment']);
+        $query = Refund::with(['user', 'investment', 'subscription']);
 
         if ($request->has('status')) {
             $query->where('status', $request->status);

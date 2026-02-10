@@ -121,7 +121,7 @@
                                 <span class="font-bold">₹{{ number_format(auth()->user()->wallet_balance ?? 0) }}</span>
                             </div>
                             @if((auth()->user()->wallet_balance ?? 0) < ($project->min_investment ?? 1000))
-                                <p class="text-xs text-red-500 mt-1">Insufficient funds. <a href="{{ route('subscriber.payments.index') }}" class="underline font-bold">Add Money</a></p>
+                                <p class="text-xs text-red-500 mt-1">Insufficient funds. <a href="{{ route('subscriber.deposit.create') }}" class="underline font-bold">Add Money</a></p>
                             @endif
                         </div>
 

@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\FundPoolController;
 use App\Http\Controllers\Admin\RewardPoolController;
 use App\Http\Controllers\Admin\ContentPageController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\WalletController;
 use App\Http\Controllers\Admin\InvestmentController;
 use App\Http\Controllers\Admin\ProfitDistributionController;
 use App\Http\Controllers\Admin\PaymentController;
@@ -45,6 +46,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('users/{user}/activate', [UserController::class, 'activate'])->name('users.activate');
     Route::post('users/{user}/deactivate', [UserController::class, 'deactivate'])->name('users.deactivate');
     Route::post('users/{user}/ban', [UserController::class, 'ban'])->name('users.ban');
+    Route::put('users/{user}/password', [UserController::class, 'updatePassword'])->name('users.update-password');
+    Route::post('users/{user}/wallet/adjust', [WalletController::class, 'store'])->name('users.wallet.adjust');
     Route::resource('projects', ProjectController::class);
     Route::resource('plans', SubscriptionPlanController::class);
     Route::resource('pools', FundPoolController::class);

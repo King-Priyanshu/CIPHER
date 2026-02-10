@@ -276,15 +276,37 @@ class AnalyticsController extends Controller
         
         switch ($type) {
             case 'revenue':
-                $data = Payment::with('user')->where('status', 'succeeded')->latest()->get();
-                $filename = 'revenue_report.csv';
-                // Logic to generate CSV...
-                break;
+                $fileName = 'revenue_report-' . now()->format('Y-m-d') . '.csv';
+                $query = Payment::with('user')->where('status', 'succeeded')->latest();
+                
+                $headers = [
+                    'Content-Type' => 'text/csv',
+                    'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
+                ];
+
+                $callback = function() use ($query) {
+                    $file = fopen('php://output', 'w');
+                    fputcsv($file, ['Date', 'Payment ID', 'User', 'Amount', 'Method']);
+
+                    $query->chunk(100, function($payments) use ($file) {
+                        foreach ($payments as $payment) {
+                            fputcsv($file, [
+                                $payment->created_at->format('Y-m-d H:i:s'),
+                                $payment->id,
+                                $payment->user->name ?? 'N/A',
+                                $payment->amount,
+                                $payment->payment_method
+                            ]);
+                        }
+                    });
+
+                    fclose($file);
+                };
+                
+                return response()->stream($callback, 200, $headers);
+
             default:
                 return back()->with('error', 'Invalid report type');
         }
-
-        // Return download response... (Simplified for now)
-        return back()->with('success', 'Report generation initiated.');
     }
 }
